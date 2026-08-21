@@ -19,21 +19,57 @@ function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&l
 function formatNum(n){return String(n).padStart(4,'0')}
 
 async function loadNumbers(){
-  const grid=document.getElementById('grid'); if(!grid)return;
-  grid.innerHTML='<p class="loading">Cargando números…</p>'; msg('numbersMsg','');
-  const {data:raffle,error:raffleError}=await db.from('raffles').select('ticket_price,total_tickets,status').eq('id',RAFFLE_ID).single();
-  if(raffleError){grid.innerHTML='';msg('numbersMsg','No se pudo conectar con la rifa.','error');return}
-  rafflePrice=Number(raffle.ticket_price||10);document.getElementById('unitPrice').textContent=money(rafflePrice);
-  const {data,error}=await db.from('tickets').select('number,status').eq('raffle_id',RAFFLE_ID).order('number');
-  if(error){grid.innerHTML='';msg('numbersMsg','No se pudieron cargar los números.','error');return}
-  grid.innerHTML='';
-  for(const t of (data||[])){
-    const unavailable=t.status!=='available'; const b=document.createElement('button');
-    b.className='num '+(unavailable?'sold ':'')+(selected.has(t.number)?'selected':''); b.textContent=formatNum(t.number); b.disabled=unavailable;
-    b.onclick=()=>toggleNumber(t.number); grid.appendChild(b);
-  }
-  renderSelection();
+const grid=document.getElementById('grid');
+if(!grid)return;
+
+grid.innerHTML='<p class="loading">Cargando números...</p>';
+msg('numbersMsg','');
+
+const {data:raffle,error:raffleError}=await db
+.from('raffles')
+.select('ticket_price,total_tickets')
+.eq('id',RAFFLE_ID)
+.single();
+
+if(raffleError){
+grid.innerHTML='';
+msg('numbersMsg','No se pudo conectar con la rifa.','error');
+return;
 }
+
+rafflePrice=Number(raffle.ticket_price||10);
+
+const {data,error}=await db
+.from('tickets')
+.select('number,status')
+.eq('raffle_id',RAFFLE_ID)
+.order('number',{ascending:true});
+
+if(error){
+grid.innerHTML='';
+msg('numbersMsg','No se pudieron cargar los números.','error');
+return;
+}
+
+grid.innerHTML='';
+
+for(const t of (data||[])){
+const unavailable=t.status!=='available';
+const b=document.createElement('button');
+
+b.textContent=formatNum(t.number);
+b.className='num '+(unavailable?'sold ':'')+
+(selected.has(t.number)?'selected':'');
+
+b.disabled=unavailable;
+b.onclick=()=>toggleNumber(t.number);
+
+grid.appendChild(b);
+}
+
+renderSelection();
+}
+
 function toggleNumber(n){
   if(selected.has(n))selected.delete(n); else if(selected.size<20)selected.add(n); else {msg('numbersMsg','Puedes elegir un máximo de 20 números.','error');return}
   msg('numbersMsg',''); renderSelection();
