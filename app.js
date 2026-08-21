@@ -18,49 +18,200 @@ function msg(id,text,type=''){const el=document.getElementById(id);if(el){el.tex
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function formatNum(n){return String(n).padStart(4,'0')}
 
-async function loadNumbers(){
-const grid=document.getElementById('grid');
-if(!grid)return;
+let totalTickets = 2000;
+let visibleNumbers = 100;
+let soldNumbers = new Set();
 
-grid.innerHTML='<p class="loading">Cargando números...</p>';
+async function loadNumbers(){
+const grid = document.getElementById('grid');
+
+if(!grid) return;
+
+grid.innerHTML =
+'<p class="loading">Cargando números...</p>';
+
 msg('numbersMsg','');
 
-const {data:raffle,error:raffleError}=await db
+const {data:raffle,error:raffleError} = await db
 .from('raffles')
 .select('ticket_price,total_tickets')
 .eq('id',RAFFLE_ID)
 .single();
 
 if(raffleError){
-grid.innerHTML='';
-msg('numbersMsg','No se pudo conectar con la rifa.','error');
+grid.innerHTML = '';
+
+msg(
+'numbersMsg',
+'No se pudo conectar con la rifa.',
+'error'
+);
+
 return;
 }
 
-rafflePrice=Number(raffle.ticket_price||10);
+rafflePrice = Number(
+raffle.ticket_price || 10
+);
 
-const {data,error}=await db
+totalTickets = Number(
+raffle.total_tickets || 2000
+);
+
+const {data,error} = await db
 .from('tickets')
 .select('number,status')
 .eq('raffle_id',RAFFLE_ID)
 .order('number',{ascending:true});
 
 if(error){
-grid.innerHTML='';
-msg('numbersMsg','No se pudieron cargar los números.','error');
+grid.innerHTML = '';
+
+msg(
+'numbersMsg',
+'No se pudieron cargar los números.',
+'error'
+);
+
 return;
 }
 
-for(let i=1;i<=2000;i++){
-const b=document.createElement('button');
-b.textContent=formatNum(i);
-b.className='num';
-b.onclick=function(){toggleNumber(i);};
-grid.appendChild(b);
+soldNumbers = new Set(
+(data || [])
+.filter(t =>
+t.status === 'sold' ||
+t.status === 'reserved' ||
+t.status === 'winner'
+)
+.map(t => Number(t.number))
+);
+
+visibleNumbers = Math.min(
+100,
+totalTickets
+);
+
+renderNumbers();
+
+const priceLabel =
+document.getElementById(
+'rafflePriceLabel'
+);
+
+if(priceLabel){
+priceLabel.textContent =
+money(rafflePrice);
+}
+
+renderSelection();
 }
 
 
+function renderNumbers(){
+
+const grid =
+document.getElementById('grid');
+
+if(!grid) return;
+
+grid.innerHTML = '';
+
+const limit =
+Math.min(
+visibleNumbers,
+totalTickets
+);
+
+for(
+let i = 1;
+i <= limit;
+i++
+){
+
+const b =
+document.createElement('button');
+
+b.textContent =
+formatNum(i);
+
+b.className =
+'num';
+
+if(soldNumbers.has(i)){
+
+b.classList.add('sold');
+
+b.disabled = true;
+
+b.title =
+'Número no disponible';
+
+}else{
+
+b.onclick = function(){
+
+toggleNumber(i);
+
+};
+
+}
+
+grid.appendChild(b);
+}
+
+const loadMoreBtn =
+document.getElementById(
+'loadMoreBtn'
+);
+
+if(loadMoreBtn){
+
+if(
+visibleNumbers <
+totalTickets
+){
+
+loadMoreBtn.style.display =
+'block';
+
+loadMoreBtn.textContent =
+`Ver más números (${Math.min(
+100,
+totalTickets -
+visibleNumbers
+)})`;
+
+}else{
+
+loadMoreBtn.style.display =
+'none';
+
+}
+
+}
+
+}
+
+
+function loadMoreNumbers(){
+
+if(
+visibleNumbers >=
+totalTickets
+){
+return;
+}
+
+visibleNumbers =
+Math.min(
+visibleNumbers + 100,
+totalTickets
+);
+
+renderNumbers();
+
 renderSelection();
+
 }
 
 function toggleNumber(n){
