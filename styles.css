@@ -8,19 +8,8 @@
 .copy-payment{border:1px solid #7047a4;background:#17122a;color:#fff;border-radius:9px;padding:9px 14px;font-weight:800;cursor:pointer}
 /* ===== RIFAS VIP - ANIMACIONES ===== */
 
-.roulette-main {
-transform-origin: center center;
-animation: rouletteSpin 12s linear infinite;
-}
 
-@keyframes rouletteSpin {
-from {
-transform: rotate(0deg);
-}
-to {
-transform: rotate(360deg);
-}
-}
+
 
 /* Indicador RIFA ACTIVA */
 .live i {
