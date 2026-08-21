@@ -70,9 +70,7 @@ font-weight: 800;
 letter-spacing: .3px;
 }
 /* NÚMERO SELECCIONADO */
-.number.selected,
-.numbers-card .selected,
-button.selected {
+.num.selected{
 background: #c000ff !important;
 background-color: #c000ff !important;
 border-color: #ff2bd6 !important;
