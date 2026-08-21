@@ -62,3 +62,21 @@ cursor: pointer;
 border-color: #9b68ff;
 background: #20183a;
 }
+/* BOTÓN VER NÚMEROS */
+.home-actions {
+display: flex;
+justify-content: center;
+margin-top: -18px;
+position: relative;
+z-index: 10;
+}
+
+.home-actions .primary {
+width: auto;
+min-width: 190px;
+padding: 13px 28px;
+border-radius: 14px;
+font-size: 16px;
+font-weight: 800;
+letter-spacing: .3px;
+}
