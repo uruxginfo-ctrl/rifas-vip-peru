@@ -6,3 +6,59 @@
 .payment-number-box small{display:block!important;margin:0 0 5px!important;color:#aaa2b8}
 .payment-number-box strong{display:block;font-size:22px;letter-spacing:.5px;color:#fff;margin-bottom:10px}
 .copy-payment{border:1px solid #7047a4;background:#17122a;color:#fff;border-radius:9px;padding:9px 14px;font-weight:800;cursor:pointer}
+/* ===== RIFAS VIP - ANIMACIONES ===== */
+
+.roulette-main {
+transform-origin: center center;
+animation: rouletteSpin 12s linear infinite;
+}
+
+@keyframes rouletteSpin {
+from {
+transform: rotate(0deg);
+}
+to {
+transform: rotate(360deg);
+}
+}
+
+/* Indicador RIFA ACTIVA */
+.live i {
+display: inline-block;
+width: 8px;
+height: 8px;
+background: #42ed6c;
+border-radius: 50%;
+margin-right: 6px;
+animation: livePulse 1.2s infinite;
+}
+
+@keyframes livePulse {
+0%, 100% {
+opacity: 1;
+box-shadow: 0 0 0 0 rgba(66, 237, 108, 0.45);
+}
+
+50% {
+opacity: 0.35;
+box-shadow: 0 0 0 7px rgba(66, 237, 108, 0);
+}
+}
+
+/* Botón Ver más números */
+.load-more {
+width: 100%;
+margin-top: 14px;
+padding: 13px;
+border-radius: 10px;
+border: 1px solid #60458d;
+background: #17132b;
+color: #fff;
+font-weight: 800;
+cursor: pointer;
+}
+
+.load-more:hover {
+border-color: #9b68ff;
+background: #20183a;
+}
