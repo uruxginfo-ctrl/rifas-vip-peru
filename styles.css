@@ -69,3 +69,13 @@ font-size: 16px;
 font-weight: 800;
 letter-spacing: .3px;
 }
+/* NÚMERO SELECCIONADO */
+.number.selected,
+.numbers-card .selected,
+button.selected {
+background: #c000ff !important;
+background-color: #c000ff !important;
+border-color: #ff2bd6 !important;
+color: #ffffff !important;
+box-shadow: 0 0 12px #c000ff !important;
+}
