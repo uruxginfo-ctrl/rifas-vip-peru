@@ -220,8 +220,8 @@ function toggleNumber(n){
 }
 function renderSelection(){
   const nums=[...selected].sort((a,b)=>a-b); document.getElementById('chosen').textContent=nums.map(formatNum).join(', ')||'—'; document.getElementById('total').textContent='Total '+money(nums.length*rafflePrice); document.getElementById('continueBtn').disabled=!nums.length;
-  document.querySelectorAll('.num').forEach(b=>{const n=Number(b.textContent);b.classList.toggle('selected',selected.has(n))});
-}
+  document.querySelectorAll('.num').forEach(b=>{const n=Number(b.textContent);const s=selected.has(n);b.classList.toggle('selected',s);b.style.backgroundColor=s?'#c000ff':'';b.style.borderColor=s?'#ff2bd6':'';b.style.color=s?'#fff':'';b.style.boxShadow=s?'0 0 12px #c000ff':''});
+
 function syncCheckout(){
   const nums=[...selected].sort((a,b)=>a-b); document.getElementById('checkoutNumbers').textContent=nums.map(formatNum).join(', ')||'—'; document.getElementById('checkoutTotal').textContent=money(nums.length*rafflePrice);
 }
