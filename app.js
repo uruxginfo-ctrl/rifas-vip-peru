@@ -51,21 +51,14 @@ msg('numbersMsg','No se pudieron cargar los números.','error');
 return;
 }
 
-grid.innerHTML='';
-
-for(const t of (data||[])){
-const unavailable=t.status!=='available';
+for(let i=1;i<=2000;i++){
 const b=document.createElement('button');
-
-b.textContent=formatNum(t.number);
-b.className='num '+(unavailable?'sold ':'')+
-(selected.has(t.number)?'selected':'');
-
-b.disabled=unavailable;
-b.onclick=()=>toggleNumber(t.number);
-
+b.textContent=formatNum(i);
+b.className='num';
+b.onclick=function(){toggleNumber(i);};
 grid.appendChild(b);
 }
+
 
 renderSelection();
 }
