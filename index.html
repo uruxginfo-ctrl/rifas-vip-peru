@@ -15,17 +15,90 @@
     <div class="live"><i></i> Rifa activa</div>
   </header>
 
-  <section id="home" class="view active">
-<div class="reference-wrap"><img class="roulette-main" src="rifas-vip-peru.png" alt="Ruleta principal RIFAS VIP PERÚ"></div>
+ <section id="home" class="view active">
 
-    <div class="reference-hotspots">
-      <button onclick="show('numbers')" aria-label="Elegir números"></button>
-    </div>
-    <div class="home-actions">
-<button class="primary" onclick="show('numbers')">VER NÚMEROS →</button>
-    </div>
-  </section>
+  <!-- BOTÓN PRINCIPAL -->
+  <div class="vip-action-wrap">
+    <button class="vip-action" onclick="show('numbers')">
+      <span class="vip-ticket">🎟</span>
+      <span>Elegir números</span>
+      <b>→</b>
+    </button>
+  </div>
 
+  <!-- PORTADA PRINCIPAL -->
+  <div class="vip-hero">
+
+    <div class="vip-hero-glow"></div>
+
+    <img
+      class="vip-hero-image"
+      src="rifas-vip-peru.png"
+      alt="RIFAS VIP PERÚ"
+    >
+
+    <!-- ZONA CLICABLE IZQUIERDA -->
+    <button
+      class="vip-hotspot vip-hotspot-left"
+      onclick="show('numbers')"
+      aria-label="Comprar número">
+    </button>
+
+    <!-- ZONA CLICABLE DERECHA -->
+    <button
+      class="vip-hotspot vip-hotspot-right"
+      onclick="show('numbers')"
+      aria-label="Participar y ganar">
+    </button>
+
+    <!-- ZONA CLICABLE ELIGE -->
+    <button
+      class="vip-hotspot vip-hotspot-choose"
+      onclick="show('numbers')"
+      aria-label="Elegir números">
+    </button>
+
+  </div>
+
+  <!-- MENSAJE DE CONFIANZA -->
+  <div class="vip-mini-info">
+
+    <div>
+      <span>🔒</span>
+      <strong>COMPRA SEGURA</strong>
+      <small>Tus datos protegidos</small>
+    </div>
+
+    <div>
+      <span>💬</span>
+      <strong>ATENCIÓN POR WHATSAPP</strong>
+      <small>Estamos para ayudarte</small>
+    </div>
+
+    <div>
+      <span>🏆</span>
+      <strong>GRANDES PREMIOS</strong>
+      <small>Premios de calidad</small>
+    </div>
+
+  </div>
+
+  <!-- PIE DE PORTADA -->
+  <div class="vip-footer">
+
+    <div class="vip-footer-line"></div>
+
+    <h2>
+      RIFAS <b>VIP</b> PERÚ
+    </h2>
+
+    <div class="vip-footer-brand">
+      U R U <b>×</b> G
+    </div>
+
+  </div>
+
+</section>
   <section id="numbers" class="view">
     <div class="steps"><b class="on">1</b> Elegir números <span>—</span><b>2</b> Datos y pago <span>—</span><b>3</b> Ticket</div>
     <div class="panel">
