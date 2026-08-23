@@ -1264,3 +1264,396 @@ box-shadow: 0 0 12px #c000ff !important;
     letter-spacing:6px;
   }
 }
+/* =========================================================
+   RIFAS VIP PERÚ — PORTADA FINAL
+   NO MODIFICAR DEBAJO
+   ========================================================= */
+
+/* PORTADA GENERAL */
+#home{
+  padding-top:0;
+}
+
+.vip-action-wrap{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin:28px auto 22px;
+  position:relative;
+  z-index:20;
+}
+
+.vip-action{
+  width:680px;
+  max-width:calc(100% - 30px);
+  height:78px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:24px;
+
+  border:2px solid #f04bd0;
+  border-radius:18px;
+
+  background:
+    linear-gradient(
+      100deg,
+      #160b25,
+      #090713
+    );
+
+  color:#fff;
+  font-size:27px;
+  font-weight:900;
+
+  box-shadow:
+    0 0 12px rgba(240,75,208,.45),
+    0 0 35px rgba(240,75,208,.20);
+
+  cursor:pointer;
+  transition:none;
+}
+
+.vip-action:hover{
+  transform:none;
+}
+
+.vip-action:active{
+  transform:scale(.98);
+}
+
+.vip-action b{
+  font-size:40px;
+  font-weight:400;
+  line-height:1;
+}
+
+.vip-ticket{
+  font-size:34px;
+  filter:drop-shadow(0 0 8px #ff35d5);
+}
+
+
+/* =========================================================
+   IMAGEN PRINCIPAL
+   ========================================================= */
+
+.vip-hero{
+  position:relative;
+
+  width:100%;
+  max-width:1024px;
+
+  margin:0 auto;
+
+  overflow:hidden;
+
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:20px;
+
+  background:#05040f;
+
+  box-shadow:
+    0 25px 80px rgba(0,0,0,.65),
+    0 0 45px rgba(110,35,255,.15);
+}
+
+.vip-hero-image{
+  display:block;
+
+  width:100%;
+  height:auto;
+
+  max-width:100%;
+
+  object-fit:contain;
+
+  animation:none !important;
+  transform:none !important;
+
+  user-select:none;
+}
+
+.vip-hero:hover .vip-hero-image{
+  animation:none !important;
+  transform:none !important;
+}
+
+
+/* QUITAR MOVIMIENTO DEL BRILLO */
+.vip-hero-glow{
+  animation:none !important;
+  pointer-events:none;
+}
+
+
+/* =========================================================
+   ZONAS CLICABLES
+   ========================================================= */
+
+.vip-hotspot-left{
+  left:4%;
+  bottom:13%;
+  width:42%;
+  height:17%;
+}
+
+.vip-hotspot-right{
+  right:2%;
+  top:48%;
+  width:31%;
+  height:20%;
+}
+
+.vip-hotspot-choose{
+  left:5%;
+  bottom:13%;
+  width:42%;
+  height:17%;
+}
+
+
+/* =========================================================
+   TRES BLOQUES — COMO EN LA REFERENCIA
+   ========================================================= */
+
+.vip-mini-info{
+  width:100%;
+  max-width:1024px;
+
+  margin:0 auto;
+
+  display:grid !important;
+  grid-template-columns:1fr !important;
+
+  background:#070611;
+
+  border:1px solid rgba(255,255,255,.15);
+  border-top:0;
+
+  border-radius:0 0 16px 16px;
+
+  overflow:hidden;
+}
+
+.vip-mini-info > div{
+  min-height:92px;
+
+  padding:15px 20px;
+
+  display:flex !important;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+
+  text-align:center;
+
+  gap:5px;
+
+  border-left:0 !important;
+  border-right:0 !important;
+}
+
+.vip-mini-info > div + div{
+  border-left:0 !important;
+  border-top:1px solid rgba(255,255,255,.12) !important;
+}
+
+.vip-mini-icon{
+  width:34px;
+  height:34px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.vip-mini-icon svg{
+  width:34px;
+  height:34px;
+
+  fill:none;
+
+  stroke:currentColor;
+  stroke-width:1.8;
+
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.secure-icon{
+  color:#23bfff;
+}
+
+.whatsapp-icon{
+  color:#49ef70;
+}
+
+.prize-icon{
+  color:#ffc52e;
+}
+
+.vip-mini-info strong{
+  color:#fff;
+  font-size:13px;
+  font-weight:800;
+}
+
+.vip-mini-info small{
+  color:#aaa5b5;
+  font-size:11px;
+}
+
+
+/* =========================================================
+   PIE
+   ========================================================= */
+
+.vip-footer{
+  width:100%;
+  max-width:1024px;
+
+  margin:30px auto 20px;
+
+  text-align:center;
+}
+
+.vip-footer-line{
+  width:100%;
+  height:1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #ff20cf,
+      transparent
+    );
+
+  box-shadow:0 0 8px rgba(255,32,207,.35);
+
+  margin-bottom:18px;
+}
+
+.vip-footer h2{
+  margin:0;
+
+  color:#fff;
+
+  font-size:30px;
+
+  letter-spacing:4px;
+}
+
+.vip-footer h2 b{
+  color:#ff159f;
+}
+
+.vip-footer-brand{
+  margin-top:10px;
+
+  color:#fff;
+
+  font-size:14px;
+
+  letter-spacing:8px;
+}
+
+.vip-footer-brand b{
+  color:#ff159f;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (min-width:701px) and (max-width:1100px){
+
+  .vip-action-wrap{
+    margin:24px auto 20px;
+  }
+
+  .vip-action{
+    width:680px;
+    max-width:calc(100% - 30px);
+  }
+
+  .vip-hero{
+    width:calc(100% - 30px);
+    max-width:1024px;
+  }
+
+  .vip-mini-info{
+    width:calc(100% - 30px);
+    max-width:1024px;
+  }
+
+  .vip-footer{
+    width:calc(100% - 30px);
+  }
+}
+
+
+/* =========================================================
+   MÓVIL
+   ========================================================= */
+
+@media (max-width:700px){
+
+  .vip-action-wrap{
+    margin:18px auto 14px;
+  }
+
+  .vip-action{
+    width:calc(100% - 24px);
+    max-width:none;
+    height:64px;
+
+    font-size:21px;
+
+    gap:13px;
+
+    border-radius:15px;
+  }
+
+  .vip-ticket{
+    font-size:27px;
+  }
+
+  .vip-action b{
+    font-size:30px;
+  }
+
+  .vip-hero{
+    width:calc(100% - 16px);
+    max-width:none;
+    border-radius:16px;
+  }
+
+  .vip-mini-info{
+    width:calc(100% - 16px);
+    max-width:none;
+    border-radius:0 0 14px 14px;
+  }
+
+  .vip-mini-info > div{
+    min-height:78px;
+  }
+
+  .vip-footer{
+    width:calc(100% - 30px);
+  }
+
+  .vip-footer h2{
+    font-size:23px;
+    letter-spacing:3px;
+  }
+
+  .vip-footer-brand{
+    font-size:11px;
+    letter-spacing:6px;
+  }
+}
