@@ -77,3 +77,533 @@ border-color: #ff2bd6 !important;
 color: #ffffff !important;
 box-shadow: 0 0 12px #c000ff !important;
 }
+/* =========================================================
+   RIFAS VIP PERÚ — NUEVA PORTADA DINÁMICA
+   ========================================================= */
+
+
+/* ---------- BOTÓN ELEGIR NÚMEROS ---------- */
+
+.vip-action-wrap{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin:26px auto 18px;
+  position:relative;
+  z-index:20;
+}
+
+.vip-action{
+  min-width:440px;
+  max-width:90%;
+  height:76px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:28px;
+
+  border-radius:18px;
+
+  border:2px solid #ef61d1;
+
+  background:
+    linear-gradient(
+      100deg,
+      rgba(19,10,35,.98),
+      rgba(10,7,20,.98)
+    );
+
+  color:#fff;
+
+  font-size:27px;
+  font-weight:900;
+
+  letter-spacing:.2px;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.05),
+    0 0 25px rgba(221,55,214,.25);
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease,
+    border-color .2s ease;
+}
+
+.vip-action:hover{
+  transform:translateY(-3px);
+
+  border-color:#ff8ce6;
+
+  box-shadow:
+    0 0 25px rgba(224,47,221,.55),
+    0 10px 35px rgba(0,0,0,.5);
+}
+
+.vip-action:active{
+  transform:scale(.98);
+}
+
+.vip-action b{
+  font-size:38px;
+  line-height:1;
+}
+
+.vip-ticket{
+  font-size:35px;
+
+  filter:
+    drop-shadow(0 0 8px #ff43db);
+}
+
+
+/* ---------- PORTADA ---------- */
+
+.vip-hero{
+  position:relative;
+
+  width:100%;
+  max-width:1050px;
+
+  margin:0 auto;
+
+  overflow:hidden;
+
+  border:1px solid rgba(255,255,255,.18);
+
+  border-radius:20px;
+
+  background:#05040f;
+
+  box-shadow:
+    0 25px 80px rgba(0,0,0,.65),
+    0 0 45px rgba(110,35,255,.12);
+}
+
+
+/* brillo detrás de la portada */
+
+.vip-hero-glow{
+  position:absolute;
+
+  width:55%;
+  height:45%;
+
+  left:23%;
+  top:25%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(150,0,255,.35),
+      rgba(150,0,255,0) 70%
+    );
+
+  filter:blur(25px);
+
+  pointer-events:none;
+
+  z-index:0;
+
+  animation:
+    vipGlow 4s ease-in-out infinite;
+}
+
+
+/* imagen principal */
+
+.vip-hero-image{
+  position:relative;
+
+  z-index:2;
+
+  display:block;
+
+  width:100%;
+  height:auto;
+
+  object-fit:contain;
+
+  animation:
+    vipHeroFloat 5s ease-in-out infinite;
+
+  transform-origin:center center;
+
+  user-select:none;
+}
+
+
+/* movimiento suave de la portada */
+
+@keyframes vipHeroFloat{
+
+  0%{
+    transform:scale(1);
+  }
+
+  50%{
+    transform:scale(1.012);
+  }
+
+  100%{
+    transform:scale(1);
+  }
+
+}
+
+
+@keyframes vipGlow{
+
+  0%,100%{
+    opacity:.55;
+    transform:scale(.95);
+  }
+
+  50%{
+    opacity:1;
+    transform:scale(1.08);
+  }
+
+}
+
+
+/* ---------- ZONAS CLICABLES ---------- */
+
+.vip-hotspot{
+  position:absolute;
+
+  z-index:10;
+
+  border:0;
+
+  background:transparent;
+
+  cursor:pointer;
+
+  padding:0;
+}
+
+
+/* botón "COMPRA TU NÚMERO" */
+
+.vip-hotspot-left{
+  left:4%;
+  top:41%;
+
+  width:28%;
+  height:9%;
+}
+
+
+/* botón "PARTICIPA Y GANA" */
+
+.vip-hotspot-right{
+  right:3%;
+  top:35%;
+
+  width:29%;
+  height:11%;
+}
+
+
+/* zona principal de la ruleta */
+
+.vip-hotspot-choose{
+  left:22%;
+  top:18%;
+
+  width:48%;
+  height:30%;
+
+  border-radius:50%;
+}
+
+
+/* pequeño brillo cuando pasas por encima */
+
+.vip-hotspot:hover{
+  background:
+    radial-gradient(
+      circle,
+      rgba(255,255,255,.05),
+      transparent 65%
+    );
+}
+
+
+/* ---------- FRANJA DE CONFIANZA ---------- */
+
+.vip-mini-info{
+  width:100%;
+  max-width:1050px;
+
+  margin:18px auto 0;
+
+  display:grid;
+  grid-template-columns:
+    repeat(3,1fr);
+
+  border:
+    1px solid rgba(255,255,255,.16);
+
+  border-radius:16px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(15,13,30,.95),
+      rgba(7,6,16,.98)
+    );
+
+  overflow:hidden;
+}
+
+
+.vip-mini-info > div{
+  min-height:92px;
+
+  display:grid;
+
+  grid-template-columns:
+    45px 1fr;
+
+  grid-template-rows:
+    1fr 1fr;
+
+  align-items:center;
+
+  padding:15px 20px;
+
+  border-right:
+    1px solid rgba(255,255,255,.12);
+}
+
+
+.vip-mini-info > div:last-child{
+  border-right:0;
+}
+
+
+.vip-mini-info span{
+  grid-row:1 / span 2;
+
+  font-size:27px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  filter:
+    drop-shadow(0 0 7px rgba(255,255,255,.18));
+}
+
+
+.vip-mini-info strong{
+  font-size:13px;
+
+  letter-spacing:.3px;
+}
+
+
+.vip-mini-info small{
+  color:#b6afc2;
+
+  font-size:11px;
+}
+
+
+/* ---------- PIE ---------- */
+
+.vip-footer{
+  max-width:1050px;
+
+  margin:34px auto 10px;
+
+  text-align:center;
+}
+
+
+.vip-footer-line{
+  height:1px;
+
+  width:100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #d832b5,
+      transparent
+    );
+
+  margin-bottom:20px;
+}
+
+
+.vip-footer h2{
+  margin:0;
+
+  font-size:34px;
+
+  letter-spacing:3px;
+
+  font-weight:900;
+}
+
+
+.vip-footer h2 b{
+  color:#ef3bb9;
+}
+
+
+.vip-footer-brand{
+  margin-top:12px;
+
+  font-size:15px;
+
+  letter-spacing:8px;
+
+  color:#e8e1ed;
+}
+
+
+.vip-footer-brand b{
+  color:#ef3bb9;
+  font-size:20px;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media(max-width:800px){
+
+  .vip-action-wrap{
+    margin-top:20px;
+  }
+
+  .vip-action{
+    min-width:0;
+
+    width:92%;
+
+    height:65px;
+
+    font-size:21px;
+
+    gap:18px;
+  }
+
+  .vip-action b{
+    font-size:31px;
+  }
+
+  .vip-ticket{
+    font-size:29px;
+  }
+
+  .vip-hero{
+    border-radius:16px;
+  }
+
+  .vip-mini-info{
+    grid-template-columns:1fr;
+  }
+
+  .vip-mini-info > div{
+    border-right:0;
+
+    border-bottom:
+      1px solid rgba(255,255,255,.12);
+
+    min-height:72px;
+  }
+
+  .vip-mini-info > div:last-child{
+    border-bottom:0;
+  }
+
+  .vip-footer h2{
+    font-size:27px;
+  }
+
+}
+
+
+/* =========================================================
+   MÓVIL
+   ========================================================= */
+
+@media(max-width:480px){
+
+  .vip-action-wrap{
+    margin:16px auto 12px;
+  }
+
+  .vip-action{
+    width:94%;
+
+    height:58px;
+
+    border-radius:14px;
+
+    font-size:18px;
+
+    gap:13px;
+  }
+
+  .vip-action b{
+    font-size:27px;
+  }
+
+  .vip-ticket{
+    font-size:24px;
+  }
+
+  .vip-hero{
+    border-radius:12px;
+  }
+
+  .vip-mini-info > div{
+    padding:12px 15px;
+  }
+
+  .vip-mini-info strong{
+    font-size:12px;
+  }
+
+  .vip-footer{
+    margin-top:25px;
+  }
+
+  .vip-footer h2{
+    font-size:22px;
+
+    letter-spacing:2px;
+  }
+
+  .vip-footer-brand{
+    font-size:12px;
+
+    letter-spacing:6px;
+  }
+
+}
+
+
+/* =========================================================
+   ACCESIBILIDAD / MOVIMIENTO REDUCIDO
+   ========================================================= */
+
+@media(prefers-reduced-motion:reduce){
+
+  .vip-hero-image,
+  .vip-hero-glow{
+    animation:none;
+  }
+
+}
