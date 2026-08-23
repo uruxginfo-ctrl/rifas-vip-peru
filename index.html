@@ -59,7 +59,212 @@
     </button>
 
   </div>
+<!-- ===== CÓMO PARTICIPAR ===== -->
 
+<style>
+.vip-how{
+  max-width:1050px;
+  margin:38px auto 0;
+  text-align:center;
+}
+
+.vip-how-title{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:22px;
+  margin:0 0 28px;
+  font-size:27px;
+  font-weight:900;
+  letter-spacing:2px;
+}
+
+.vip-how-title::before,
+.vip-how-title::after{
+  content:"";
+  height:1px;
+  flex:1;
+  background:linear-gradient(90deg,transparent,#d92ab4);
+}
+
+.vip-how-title::after{
+  background:linear-gradient(90deg,#d92ab4,transparent);
+}
+
+.vip-how-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:38px;
+}
+
+.vip-how-card{
+  position:relative;
+  min-height:220px;
+  padding:24px 22px 26px;
+  background:linear-gradient(145deg,#121026,#070611);
+  border:1px solid rgba(132,94,180,.55);
+  border-radius:18px;
+  box-shadow:0 15px 40px rgba(0,0,0,.3);
+}
+
+.vip-how-number{
+  position:absolute;
+  left:20px;
+  top:18px;
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  border:2px solid #a44dff;
+  color:white;
+  font-size:20px;
+  font-weight:900;
+  box-shadow:0 0 18px rgba(190,65,255,.35);
+}
+
+.vip-how-icon{
+  height:82px;
+  display:grid;
+  place-items:center;
+  color:#f22da9;
+  font-size:48px;
+  text-shadow:0 0 18px rgba(242,45,169,.55);
+}
+
+.vip-how-card h3{
+  margin:8px 0;
+  font-size:22px;
+  letter-spacing:.5px;
+}
+
+.vip-how-card p{
+  margin:0;
+  color:#c0b9cb;
+  font-size:15px;
+  line-height:1.55;
+}
+
+.vip-how-arrow{
+  position:absolute;
+  right:-30px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:38px;
+  color:white;
+  z-index:5;
+}
+
+@media(max-width:800px){
+
+  .vip-how{
+    margin-top:30px;
+  }
+
+  .vip-how-grid{
+    grid-template-columns:1fr;
+    gap:14px;
+  }
+
+  .vip-how-card{
+    min-height:145px;
+    padding:24px 20px 24px 90px;
+    text-align:left;
+  }
+
+  .vip-how-number{
+    left:18px;
+    top:50%;
+    transform:translateY(-50%);
+  }
+
+  .vip-how-icon{
+    display:none;
+  }
+
+  .vip-how-arrow{
+    display:none;
+  }
+
+  .vip-how-card h3{
+    font-size:20px;
+  }
+
+  .vip-how-card p{
+    font-size:14px;
+  }
+
+  .vip-how-title{
+    font-size:22px;
+  }
+}
+</style>
+
+<section class="vip-how">
+
+  <h2 class="vip-how-title">
+    ¿CÓMO PARTICIPAR?
+  </h2>
+
+  <div class="vip-how-grid">
+
+    <!-- PASO 01 -->
+    <article class="vip-how-card">
+
+      <span class="vip-how-number">01</span>
+
+      <div class="vip-how-icon">☝</div>
+
+      <h3>ELIGE</h3>
+
+      <p>
+        Selecciona tus números favoritos.
+      </p>
+
+      <span class="vip-how-arrow">›</span>
+
+    </article>
+
+
+    <!-- PASO 02 -->
+    <article class="vip-how-card">
+
+      <span class="vip-how-number">02</span>
+
+      <div class="vip-how-icon">▣</div>
+
+      <h3>PAGA</h3>
+
+      <p>
+        Realiza el pago mediante Yape o Plin.
+      </p>
+
+      <span class="vip-how-arrow">›</span>
+
+    </article>
+
+
+    <!-- PASO 03 -->
+    <article class="vip-how-card">
+
+      <span class="vip-how-number">03</span>
+
+      <div class="vip-how-icon">🎟</div>
+
+      <h3>PARTICIPA</h3>
+
+      <p>
+        Recibe la confirmación y participa
+        en el sorteo.
+      </p>
+
+    </article>
+
+  </div>
+
+</section>
+
+<!-- ===== FIN CÓMO PARTICIPAR ===== -->
   <!-- MENSAJE DE CONFIANZA -->
   <div class="vip-mini-info">
 
