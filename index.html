@@ -3,417 +3,168 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#05040f">
 <title>RIFAS VIP PERÚ</title>
 <link rel="stylesheet" href="styles.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode" defer></script>
 </head>
 <body>
 <div class="page">
-  <header class="header">
-    <button class="logo" onclick="show('home')">RIFAS <b>VIP</b> <small>PERÚ</small></button>
-    <div class="live"><i></i> Rifa activa</div>
-  </header>
 
- <section id="home" class="view active">
+<header class="header">
+  <button class="logo" onclick="show('home')">RIFAS <b>VIP</b> <small>PERÚ</small></button>
+  <div class="live"><i></i> Panel privado</div>
+</header>
 
-  <!-- BOTÓN PRINCIPAL -->
+<main>
+
+<section id="home" class="view active">
   <div class="vip-action-wrap">
-    <button class="vip-action" onclick="show('numbers')">
+    <button class="vip-action" onclick="show('create')">
       <span class="vip-ticket">🎟</span>
-      <span>Elegir números</span>
+      <span>Generar ticket</span>
       <b>→</b>
     </button>
   </div>
 
-  <!-- PORTADA PRINCIPAL -->
   <div class="vip-hero">
-
     <div class="vip-hero-glow"></div>
-
-    <img
-      class="vip-hero-image"
-      src="rifas-vip-peru.png"
-      alt="RIFAS VIP PERÚ"
-    >
-
-    <!-- ZONA CLICABLE IZQUIERDA -->
-    <button
-      class="vip-hotspot vip-hotspot-left"
-      onclick="show('numbers')"
-      aria-label="Comprar número">
-    </button>
-
-    <!-- ZONA CLICABLE DERECHA -->
-    <button
-      class="vip-hotspot vip-hotspot-right"
-      onclick="show('numbers')"
-      aria-label="Participar y ganar">
-    </button>
-
-    <!-- ZONA CLICABLE ELIGE -->
-    <button
-      class="vip-hotspot vip-hotspot-choose"
-      onclick="show('numbers')"
-      aria-label="Elegir números">
-    </button>
-
-  </div>
-<!-- ===== CÓMO PARTICIPAR ===== -->
-
-<style>
-.vip-how{
-  max-width:1050px;
-  margin:38px auto 0;
-  text-align:center;
-}
-
-.vip-how-title{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:22px;
-  margin:0 0 28px;
-  font-size:27px;
-  font-weight:900;
-  letter-spacing:2px;
-}
-
-.vip-how-title::before,
-.vip-how-title::after{
-  content:"";
-  height:1px;
-  flex:1;
-  background:linear-gradient(90deg,transparent,#d92ab4);
-}
-
-.vip-how-title::after{
-  background:linear-gradient(90deg,#d92ab4,transparent);
-}
-
-.vip-how-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:38px;
-}
-
-.vip-how-card{
-  position:relative;
-  min-height:220px;
-  padding:24px 22px 26px;
-  background:linear-gradient(145deg,#121026,#070611);
-  border:1px solid rgba(132,94,180,.55);
-  border-radius:18px;
-  box-shadow:0 15px 40px rgba(0,0,0,.3);
-}
-
-.vip-how-number{
-  position:absolute;
-  left:20px;
-  top:18px;
-  width:52px;
-  height:52px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  border:2px solid #a44dff;
-  color:white;
-  font-size:20px;
-  font-weight:900;
-  box-shadow:0 0 18px rgba(190,65,255,.35);
-}
-
-.vip-how-icon{
-  height:82px;
-  display:grid;
-  place-items:center;
-  color:#f22da9;
-  font-size:48px;
-  text-shadow:0 0 18px rgba(242,45,169,.55);
-}
-
-.vip-how-card h3{
-  margin:8px 0;
-  font-size:22px;
-  letter-spacing:.5px;
-}
-
-.vip-how-card p{
-  margin:0;
-  color:#c0b9cb;
-  font-size:15px;
-  line-height:1.55;
-}
-
-.vip-how-arrow{
-  position:absolute;
-  right:-30px;
-  top:50%;
-  transform:translateY(-50%);
-  font-size:38px;
-  color:white;
-  z-index:5;
-}
-
-@media(max-width:800px){
-
-  .vip-how{
-    margin-top:30px;
-  }
-
-  .vip-how-grid{
-    grid-template-columns:1fr;
-    gap:14px;
-  }
-
-  .vip-how-card{
-    min-height:145px;
-    padding:24px 20px 24px 90px;
-    text-align:left;
-  }
-
-  .vip-how-number{
-    left:18px;
-    top:50%;
-    transform:translateY(-50%);
-  }
-
-  .vip-how-icon{
-    display:none;
-  }
-
-  .vip-how-arrow{
-    display:none;
-  }
-
-  .vip-how-card h3{
-    font-size:20px;
-  }
-
-  .vip-how-card p{
-    font-size:14px;
-  }
-
-  .vip-how-title{
-    font-size:22px;
-  }
-
-}
-</style>
-
-<section class="vip-how">
-
-  <h2 class="vip-how-title">
-    ¿CÓMO PARTICIPAR?
-  </h2>
-
-  <div class="vip-how-grid">
-
-    <!-- PASO 01 -->
-    <article class="vip-how-card">
-
-      <span class="vip-how-number">01</span>
-
-      <div class="vip-how-icon">☝</div>
-
-      <h3>ELIGE</h3>
-
-      <p>
-        Selecciona tus números favoritos.
-      </p>
-
-      <span class="vip-how-arrow">›</span>
-
-    </article>
-
-
-    <!-- PASO 02 -->
-    <article class="vip-how-card">
-
-      <span class="vip-how-number">02</span>
-
-      <div class="vip-how-icon">▣</div>
-
-      <h3>PAGA</h3>
-
-      <p>
-        Realiza el pago mediante Yape o Plin.
-      </p>
-
-      <span class="vip-how-arrow">›</span>
-
-    </article>
-
-
-    <!-- PASO 03 -->
-    <article class="vip-how-card">
-
-      <span class="vip-how-number">03</span>
-
-      <div class="vip-how-icon">🎟</div>
-
-      <h3>PARTICIPA</h3>
-
-      <p>
-        Recibe la confirmación y participa
-        en el sorteo.
-      </p>
-
-    </article>
-
+    <img class="vip-hero-image" src="rifas-vip-peru.png" alt="RIFAS VIP PERÚ">
   </div>
 
-</section>
+  <div class="home-actions">
+    <button class="primary" onclick="show('create')">＋ Crear ticket</button>
+    <button class="ghost" onclick="show('tickets')">📁 Mis tickets</button>
+    <button class="ghost" onclick="show('verify')">📷 Verificar QR</button>
+    <button class="ghost" onclick="show('draw')">🏆 Realizar sorteo</button>
+  </div>
 
-  
-
-<!-- ===== FIN CÓMO PARTICIPAR ===== -->
-  <!-- MENSAJE DE CONFIANZA -->
   <div class="vip-mini-info">
-
-  <div class="vip-mini-item">
-    <span class="vip-mini-icon secure-icon">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <rect x="5" y="10" width="14" height="11" rx="2"></rect>
-        <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
-        <circle cx="12" cy="15" r="1"></circle>
-        <path d="M12 16v2"></path>
-      </svg>
-    </span>
-    <strong>COMPRA SEGURA</strong>
-    <small>Tus datos protegidos</small>
+    <div><span>🔐</span><strong>USO PRIVADO</strong><small>Solo para generar y controlar tickets</small></div>
+    <div><span>🎟</span><strong>TICKETS QR</strong><small>Código único para cada participante</small></div>
+    <div><span>📁</span><strong>GUARDADO LOCAL</strong><small>Los tickets quedan en este dispositivo</small></div>
   </div>
 
-  <div class="vip-mini-item">
-    <span class="vip-mini-icon whatsapp-icon">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M20.5 11.5a8.2 8.2 0 0 1-12.2 7.1L4 20l1.4-4.1A8.2 8.2 0 1 1 20.5 11.5Z"></path>
-        <path d="M9 8.5c.3-.5.7-.5 1-.1l1 1.5c.2.3.2.6 0 .9l-.6.7c.8 1.2 1.7 2 2.9 2.7l.7-.7c.2-.2.6-.3.9-.1l1.5.8c.4.2.5.6.3 1-.4.8-1.1 1.3-2 1.3-1.3 0-3.1-.9-4.7-2.4-1.6-1.5-2.6-3.2-2.7-4.5-.1-.8.3-1.5.7-2.1Z"></path>
-      </svg>
-    </span>
-    <strong>ATENCIÓN POR WHATSAPP</strong>
-    <small>Estamos para ayudarte</small>
-  </div>
-
-  <div class="vip-mini-item">
-    <span class="vip-mini-icon prize-icon">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M7 4h10v3a5 5 0 0 1-10 0V4Z"></path>
-        <path d="M7 6H4v2a4 4 0 0 0 4 4"></path>
-        <path d="M17 6h3v2a4 4 0 0 1-4 4"></path>
-        <path d="M12 12v5"></path>
-        <path d="M8 20h8"></path>
-        <path d="M9 17h6"></path>
-      </svg>
-    </span>
-    <strong>GRANDES PREMIOS</strong>
-    <small>Premios de calidad</small>
-  </div>
-
-</div>
-     
-    </div>
-
-  </div>
-
-  <!-- PIE DE PORTADA -->
   <div class="vip-footer">
-
     <div class="vip-footer-line"></div>
+    <h2>RIFAS <b>VIP</b> PERÚ</h2>
+    <div class="vip-footer-brand">U R U <b>×</b> G</div>
+  </div>
+</section>
 
-    <h2>
-      RIFAS <b>VIP</b> PERÚ
-    </h2>
-
-    <div class="vip-footer-brand">
-      U R U <b>×</b> G
-    </div>
-
+<section id="create" class="view">
+  <div class="panel">
+    <button class="back" onclick="show('home')">←</button>
+    <div><small>RIFAS VIP PERÚ</small><h1>Generar ticket</h1><p>Crea un ticket y genera su QR automáticamente.</p></div>
   </div>
 
+  <div class="form-layout">
+    <div class="form-card">
+      <label>Nombre completo
+        <input id="name" autocomplete="name" placeholder="Nombre del participante">
+      </label>
+      <label>WhatsApp
+        <input id="phone" inputmode="tel" autocomplete="tel" placeholder="987 654 321">
+      </label>
+      <label>Email <small>(opcional)</small>
+        <input id="email" type="email" autocomplete="email" placeholder="tu@email.com">
+      </label>
+      <label>Nombre de la rifa
+        <input id="raffleName" value="RIFAS VIP PERÚ">
+      </label>
+      <label>Premio
+        <input id="prize" placeholder="Ej.: iPhone, reloj, premio en efectivo...">
+      </label>
+      <label>Fecha del sorteo
+        <input id="drawDate" type="date">
+      </label>
+    </div>
+
+    <div class="pay-card">
+      <small>Números participantes</small>
+      <p class="muted">Escribe los números separados por coma.</p>
+      <input id="numbersInput" class="big-input" placeholder="0001, 0025, 0180">
+      <label>Precio por número
+        <input id="price" type="number" min="0" step="0.01" value="10">
+      </label>
+      <div class="notice">No hay pagos ni reservas automáticas. Tú decides cuándo un ticket queda registrado.</div>
+      <button class="primary wide" onclick="createTicket()">GENERAR TICKET QR</button>
+      <button class="ghost wide" onclick="clearCreateForm()">Limpiar</button>
+    </div>
+  </div>
 </section>
-  <section id="numbers" class="view">
-    <div class="steps"><b class="on">1</b> Elegir números <span>—</span><b>2</b> Datos y pago <span>—</span><b>3</b> Ticket</div>
-    <div class="panel">
-      <button class="back" onclick="show('home')">←</button>
-      <div><small>RIFAS VIP PERÚ</small><h1>Elige tus números</h1><p>Selecciona tus números favoritos</p></div>
-    </div>
-    <div class="numbers-layout">
-      <div class="numbers-card">
-        <div class="legend"><span>● Disponible</span><span class="sel">● Seleccionado</span><span class="sold">● Vendido</span></div>
-        <div id="grid" class="grid"></div>
-      <button id="loadMoreBtn" class="ghost wide" onclick="loadMoreNumbers()">VER MÁS NÚMEROS</button>
-      <aside class="cart">
-        <small>Números seleccionados</small>
-        <div id="chosen">—</div>
-        <hr>
-        <small>Precio por número</small>
-        <strong>S/ 10.00</strong>
-        <div id="total" class="total">Total S/ 0.00</div>
-        <button id="continueBtn" class="primary wide" onclick="show('data')" disabled>Continuar →</button>
 
-
-      </aside>
+<section id="ticket" class="view">
+  <div class="ticket">
+    <div class="ticket-head"><b>RIFAS <em>VIP</em></b><small>PERÚ</small></div>
+    <div class="ok">✓</div>
+    <h1>¡Ticket generado!</h1>
+    <p>Este ticket ha quedado guardado en la aplicación.</p>
+    <div class="ticket-numbers" id="ticketNumbers">—</div>
+    <div class="ticket-data" id="ticketData"></div>
+    <div id="qrcode" class="qr"></div>
+    <b id="ticketCode">—</b>
+    <div class="ticket-actions">
+      <button class="primary" onclick="shareWhatsApp()">Compartir por WhatsApp</button>
+      <button class="ghost" onclick="window.print()">Guardar / imprimir</button>
+      <button class="ghost" onclick="show('tickets')">Ver mis tickets</button>
+      <button class="ghost" onclick="show('home')">Volver al inicio</button>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section id="data" class="view">
-    <div class="steps"><b class="done">1</b> Números <span>—</span><b class="on">2</b> Datos y pago <span>—</span><b>3</b> Ticket</div>
-    <div class="form-layout">
-      <div class="form-card">
-        <button class="back" onclick="show('numbers')">←</button>
-        <small>RIFAS VIP PERÚ</small><h1>Tus datos</h1><p>Completa tus datos para generar tu ticket.</p>
-        <label>Nombre completo<input id="name" autocomplete="name" placeholder="Tu nombre"></label>
-        <label>WhatsApp<input id="phone" inputmode="tel" autocomplete="tel" placeholder="987 654 321"></label>
-        <label>Email <small>(opcional)</small><input id="email" type="email" autocomplete="email" placeholder="tu@email.com"></label>
-      </div>
-      <div class="pay-card">
-        <small>Tu compra</small>
-        <div id="checkoutNumbers">—</div>
-        <strong id="checkoutTotal">S/ 0.00</strong>
-        <div class="notice">El pedido se reserva primero. Tras confirmar el pago, los números pasan a vendidos y se genera el ticket con QR.</div>
-        <button class="primary wide" onclick="createOrder()">Crear pedido y continuar al pago</button>
-        <div id="orderMsg"></div>
-      </div>
-    </div>
-  </section>
+<section id="tickets" class="view">
+  <div class="panel">
+    <button class="back" onclick="show('home')">←</button>
+    <div><small>RIFAS VIP PERÚ</small><h1>Mis tickets</h1><p>Todos los tickets guardados en este dispositivo.</p></div>
+  </div>
 
-  <section id="payment" class="view">
-    <div class="center-card">
-      <div class="big-icon">S/</div>
-      <h1>Pedido creado</h1>
-      <p id="paymentText">Tus números están reservados.</p>
-      <div class="order-box"><small>Pedido</small><b id="orderId">—</b><small>Total</small><strong id="paymentAmount">—</strong></div>
-      <div class="notice">Para activar el ticket hay que confirmar el pago en el panel administrador. La conexión con el procesador de pago real requiere las credenciales de tu cuenta de pago.</div>
-      <button class="primary wide" onclick="demoConfirm()">Confirmar pago (modo demo)</button>
-      <button class="ghost wide" onclick="show('home')">Volver al inicio</button>
-    </div>
-  </section>
+  <div class="search-box">
+    <input id="ticketSearch" placeholder="Buscar por código, nombre, WhatsApp o número..." oninput="renderTickets()">
+  </div>
 
-  <section id="ticket" class="view">
-    <div class="ticket">
-      <div class="ticket-head"><b>RIFAS <em>VIP</em></b><small>PERÚ</small></div>
-      <div class="ok">✓</div>
-      <h1>¡Ticket confirmado!</h1>
-      <p>Guarda este ticket. Tu número participa en el sorteo.</p>
-      <div class="ticket-numbers" id="ticketNumbers">—</div>
-      <div class="ticket-data" id="ticketData"></div>
-      <div id="qrcode" class="qr"></div>
-      <b id="ticketCode">—</b>
-      <div class="ticket-actions"><button class="primary" onclick="shareWhatsApp()">Compartir por WhatsApp</button><button class="ghost" onclick="window.print()">Guardar / imprimir</button></div>
-    </div>
-  </section>
+  <div id="ticketsList" class="tickets-list"></div>
 
-  <section id="admin" class="view">
-    <div class="admin-head"><div><small>RIFAS VIP PERÚ</small><h1>Panel administrador</h1></div><button class="ghost" onclick="show('home')">Salir</button></div>
-    <div class="admin-stats" id="stats"></div>
-    <div class="admin-grid">
-      <div class="admin-card"><h2>Números vendidos</h2><div id="soldList"></div></div>
-      <div class="admin-card"><h2>Pedidos</h2><div id="ordersList"></div></div>
-      <div class="admin-card draw-card"><h2>Sorteo en vivo <em>EN VIVO</em></h2><div id="winner">—</div><button class="primary wide" onclick="draw()">Realizar sorteo</button></div>
-    </div>
-  </section>
+  <div class="backup-actions">
+    <button class="ghost" onclick="exportTickets()">⬇ Exportar copia</button>
+    <label class="ghost file-button">⬆ Importar copia
+      <input type="file" accept=".json,application/json" onchange="importTickets(this.files[0])">
+    </label>
+    <button class="ghost danger" onclick="deleteAllTickets()">Eliminar todos</button>
+  </div>
+</section>
+
+<section id="verify" class="view">
+  <div class="panel">
+    <button class="back" onclick="show('home')">←</button>
+    <div><small>RIFAS VIP PERÚ</small><h1>Verificar ticket</h1><p>Escanea el QR o introduce el código.</p></div>
+  </div>
+
+  <div class="verify-card">
+    <div id="reader"></div>
+    <button class="primary wide" onclick="startScanner()">📷 Abrir cámara y escanear</button>
+    <input id="verifyCode" class="big-input" placeholder="Ej.: VIP-000001">
+    <button class="ghost wide" onclick="verifyManual()">Verificar código</button>
+    <div id="verifyResult" class="verify-result"></div>
+  </div>
+</section>
+
+<section id="draw" class="view">
+  <div class="panel">
+    <button class="back" onclick="show('home')">←</button>
+    <div><small>RIFAS VIP PERÚ</small><h1>Sorteo</h1><p>Selecciona aleatoriamente un número entre tus tickets registrados.</p></div>
+  </div>
+
+  <div class="center-card">
+    <div id="winner" class="winner-result">—</div>
+    <button class="primary wide" onclick="drawWinner()">REALIZAR SORTEO</button>
+  </div>
+</section>
+
+</main>
 </div>
+
 <script src="app.js"></script>
 </body>
 </html>

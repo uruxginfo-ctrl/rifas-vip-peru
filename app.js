@@ -1,301 +1,377 @@
-const SUPABASE_URL="https://gcqzloiwwbdaawblfahb.supabase.co";
-const SUPABASE_KEY="sb_publishable_33-zrsDiD1kCqaTn_6SGIA_Qf-2WHEM";
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-const RAFFLE_ID="2a41d581-7488-4df6-8489-f06ca3f915b0";
-let selected=new Set(), currentOrder=null, currentBuyer=null, rafflePrice=10, currentPaymentMethod='yape';
+/* RIFAS VIP PERÚ - versión privada local */
 
-function show(id){
-  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
-  const target=document.getElementById(id); if(!target)return;
-  target.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'});
-  if(id==='numbers')loadNumbers();
-  if(id==='data')syncCheckout();
-  if(id==='admin')loadAdmin();
-  if(id==='adminLogin')checkExistingSession();
-}
-function money(n){return 'S/ '+Number(n||0).toFixed(2)}
-function msg(id,text,type=''){const el=document.getElementById(id);if(el){el.textContent=text;el.className='page-msg '+type}}
-function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-function formatNum(n){return String(n).padStart(4,'0')}
+const STORAGE_KEY = "rifas_vip_peru_tickets_v2";
+const COUNTER_KEY = "rifas_vip_peru_counter_v2";
 
-let totalTickets = 2000;
-let visibleNumbers = 100;
-let soldNumbers = new Set();
+let tickets = loadTickets();
+let currentTicket = null;
+let scanner = null;
 
-async function loadNumbers(){
-const grid = document.getElementById('grid');
+function show(id) {
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+  const target = document.getElementById(id);
+  if (!target) return;
+  target.classList.add("active");
+  window.scrollTo({ top: 0, behavior: "smooth" });
 
-if(!grid) return;
-
-grid.innerHTML =
-'<p class="loading">Cargando números...</p>';
-
-msg('numbersMsg','');
-
-const {data:raffle,error:raffleError} = await db
-.from('raffles')
-.select('ticket_price,total_tickets')
-.eq('id',RAFFLE_ID)
-.single();
-
-if(raffleError){
-grid.innerHTML = '';
-
-msg(
-'numbersMsg',
-'No se pudo conectar con la rifa.',
-'error'
-);
-
-return;
+  if (id === "tickets") renderTickets();
+  if (id === "ticket") renderCurrentTicket();
+  if (id === "verify") resetScannerUI();
 }
 
-rafflePrice = Number(
-raffle.ticket_price || 10
-);
-
-totalTickets = Number(
-raffle.total_tickets || 2000
-);
-
-const {data,error} = await db
-.from('tickets')
-.select('number,status')
-.eq('raffle_id',RAFFLE_ID)
-.order('number',{ascending:true});
-
-if(error){
-grid.innerHTML = '';
-
-msg(
-'numbersMsg',
-'No se pudieron cargar los números.',
-'error'
-);
-
-return;
+function money(n) {
+  return "S/ " + Number(n || 0).toFixed(2);
 }
 
-soldNumbers = new Set(
-(data || [])
-.filter(t =>
-t.status === 'sold' ||
-t.status === 'reserved' ||
-t.status === 'winner'
-)
-.map(t => Number(t.number))
-);
-
-visibleNumbers = Math.min(
-100,
-totalTickets
-);
-
-renderNumbers();
-
-const priceLabel =
-document.getElementById(
-'rafflePriceLabel'
-);
-
-if(priceLabel){
-priceLabel.textContent =
-money(rafflePrice);
+function esc(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
 }
 
-renderSelection();
+function loadTickets() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const data = raw ? JSON.parse(raw) : [];
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
 }
 
-
-function renderNumbers(){
-
-const grid =
-document.getElementById('grid');
-
-if(!grid) return;
-
-grid.innerHTML = '';
-
-const limit =
-Math.min(
-visibleNumbers,
-totalTickets
-);
-
-for(
-let i = 1;
-i <= limit;
-i++
-){
-
-const b =
-document.createElement('button');
-
-b.textContent =
-formatNum(i);
-
-b.className =
-'num';
-
-if(soldNumbers.has(i)){
-
-b.classList.add('sold');
-
-b.disabled = true;
-
-b.title =
-'Número no disponible';
-
-}else{
-
-b.onclick = function(){
-
-toggleNumber(i);
-
-};
-
+function saveTickets() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tickets));
 }
 
-grid.appendChild(b);
+function nextCode() {
+  let n = Number(localStorage.getItem(COUNTER_KEY) || "1");
+  const code = "VIP-" + String(n).padStart(6, "0");
+  localStorage.setItem(COUNTER_KEY, String(n + 1));
+  return code;
 }
 
-const loadMoreBtn =
-document.getElementById(
-'loadMoreBtn'
-);
+function normalizeNumbers(value) {
+  const raw = String(value || "")
+    .split(/[,;\s]+/)
+    .map(x => x.trim())
+    .filter(Boolean);
 
-if(loadMoreBtn){
+  const nums = [];
+  const seen = new Set();
 
-if(
-visibleNumbers <
-totalTickets
-){
+  for (const item of raw) {
+    const n = Number(item);
+    if (!Number.isInteger(n) || n < 1 || n > 9999) continue;
+    const formatted = String(n).padStart(4, "0");
+    if (!seen.has(formatted)) {
+      seen.add(formatted);
+      nums.push(formatted);
+    }
+  }
 
-loadMoreBtn.style.display =
-'block';
-
-loadMoreBtn.textContent =
-`Ver más números (${Math.min(
-100,
-totalTickets -
-visibleNumbers
-)})`;
-
-}else{
-
-loadMoreBtn.style.display =
-'none';
-
+  return nums.sort((a,b) => Number(a) - Number(b));
 }
 
+function createTicket() {
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const raffle = document.getElementById("raffleName").value.trim() || "RIFAS VIP PERÚ";
+  const prize = document.getElementById("prize").value.trim();
+  const drawDate = document.getElementById("drawDate").value;
+  const numbers = normalizeNumbers(document.getElementById("numbersInput").value);
+  const price = Number(document.getElementById("price").value || 0);
+
+  if (!name) return alert("Introduce el nombre del participante.");
+  if (!phone) return alert("Introduce el WhatsApp.");
+  if (!numbers.length) return alert("Introduce al menos un número válido.");
+  if (!Number.isFinite(price) || price < 0) return alert("El precio no es válido.");
+
+  const duplicated = numbers.filter(num =>
+    tickets.some(t => t.numbers.includes(num))
+  );
+
+  if (duplicated.length) {
+    return alert("Estos números ya están registrados: " + duplicated.join(", "));
+  }
+
+  const ticket = {
+    id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random(),
+    code: nextCode(),
+    raffle,
+    prize,
+    drawDate,
+    participant: { name, phone, email },
+    numbers,
+    pricePerNumber: price,
+    total: numbers.length * price,
+    createdAt: new Date().toISOString(),
+    status: "VALIDO"
+  };
+
+  tickets.push(ticket);
+  saveTickets();
+  currentTicket = ticket;
+  show("ticket");
 }
 
+function renderCurrentTicket() {
+  if (!currentTicket) return;
+
+  document.getElementById("ticketNumbers").textContent =
+    currentTicket.numbers.join(" • ");
+
+  document.getElementById("ticketData").innerHTML = `
+    <p><strong>Ticket</strong><br>${esc(currentTicket.code)}</p>
+    <p><strong>Participante</strong><br>${esc(currentTicket.participant.name)}</p>
+    <p><strong>WhatsApp</strong><br>${esc(currentTicket.participant.phone)}</p>
+    ${currentTicket.participant.email ? `<p><strong>Email</strong><br>${esc(currentTicket.participant.email)}</p>` : ""}
+    <p><strong>Rifa</strong><br>${esc(currentTicket.raffle)}</p>
+    <p><strong>Premio</strong><br>${esc(currentTicket.prize || "—")}</p>
+    <p><strong>Sorteo</strong><br>${esc(formatDate(currentTicket.drawDate))}</p>
+    <p><strong>Total</strong><br>${money(currentTicket.total)}</p>
+  `;
+
+  document.getElementById("ticketCode").textContent = currentTicket.code;
+
+  const qr = document.getElementById("qrcode");
+  qr.innerHTML = "";
+
+  if (typeof QRCode !== "undefined") {
+    new QRCode(qr, {
+      text: currentTicket.code,
+      width: 220,
+      height: 220,
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  } else {
+    qr.textContent = "No se pudo cargar el generador QR.";
+  }
 }
 
-
-function loadMoreNumbers(){
-
-if(
-visibleNumbers >=
-totalTickets
-){
-return;
+function formatDate(value) {
+  if (!value) return "No indicada";
+  const d = new Date(value + "T00:00:00");
+  return Number.isNaN(d.getTime()) ? value : d.toLocaleDateString("es-PE");
 }
 
-visibleNumbers =
-Math.min(
-visibleNumbers + 100,
-totalTickets
-);
+function renderTickets() {
+  const list = document.getElementById("ticketsList");
+  const query = document.getElementById("ticketSearch").value.trim().toLowerCase();
 
-renderNumbers();
+  const filtered = tickets.filter(t => {
+    if (!query) return true;
+    return [
+      t.code,
+      t.participant.name,
+      t.participant.phone,
+      ...t.numbers
+    ].join(" ").toLowerCase().includes(query);
+  }).slice().reverse();
 
-renderSelection();
+  if (!filtered.length) {
+    list.innerHTML = `<div class="empty">No se encontraron tickets.</div>`;
+    return;
+  }
 
-}
-
-function toggleNumber(n){
-  if(selected.has(n))selected.delete(n); else if(selected.size<20)selected.add(n); else {msg('numbersMsg','Puedes elegir un máximo de 20 números.','error');return}
-  msg('numbersMsg',''); renderSelection();
-}
-function renderSelection(){
-  const nums=[...selected].sort((a,b)=>a-b); document.getElementById('chosen').textContent=nums.map(formatNum).join(', ')||'—'; document.getElementById('total').textContent='Total '+money(nums.length*rafflePrice); document.getElementById('continueBtn').disabled=!nums.length;
-  document.querySelectorAll('.num').forEach(b=>{const n=Number(b.textContent);const s=selected.has(n);b.classList.toggle('selected',s);b.style.backgroundColor=s?'#c000ff':'';b.style.borderColor=s?'#ff2bd6':'';b.style.color=s?'#fff':'';b.style.boxShadow=s?'0 0 12px #c000ff':''});
-}
-function syncCheckout(){
-  const nums=[...selected].sort((a,b)=>a-b); document.getElementById('checkoutNumbers').textContent=nums.map(formatNum).join(', ')||'—'; document.getElementById('checkoutTotal').textContent=money(nums.length*rafflePrice);
-}
-async function createOrder(){
-  if(!selected.size){msg('orderMsg','Selecciona al menos un número.','error');return}
-  const name=document.getElementById('name').value.trim(),phone=document.getElementById('phone').value.trim(),email=document.getElementById('email').value.trim();
-  const paymentEl=document.querySelector('input[name="paymentMethod"]:checked'); currentPaymentMethod=paymentEl?paymentEl.value:'yape';
-  if(name.length<2||phone.length<6){msg('orderMsg','Completa nombre y WhatsApp.','error');return}
-  msg('orderMsg','Creando reserva…');
-  const {data,error}=await db.rpc('create_raffle_order',{p_raffle_id:RAFFLE_ID,p_numbers:[...selected],p_name:name,p_email:email||null,p_phone:phone});
-  if(error){msg('orderMsg',error.message||'No se pudo crear el pedido.','error');await loadNumbers();return}
-  currentOrder=data; currentBuyer={name,phone,email}; document.getElementById('orderId').textContent=data.order_id; document.getElementById('paymentAmount').textContent=money(data.amount); document.getElementById('selectedPaymentMethod').textContent=currentPaymentMethod==='plin'?'Plin':'Yape'; document.getElementById('paymentInstructions').textContent='Realiza el pago por '+(currentPaymentMethod==='plin'?'Plin':'Yape')+' y conserva tu comprobante. El administrador confirmará el pedido después de verificar el pago.'; msg('orderMsg',''); show('payment');
-}
-function copyPaymentNumber(){
-  const number='+51969888423';
-  navigator.clipboard?.writeText(number).then(()=>{
-    const b=document.querySelector('.copy-payment');
-    if(b){const old=b.textContent;b.textContent='¡Copiado!';setTimeout(()=>b.textContent=old,1400)}
-  }).catch(()=>{});
+  list.innerHTML = filtered.map(t => `
+    <article class="ticket-row">
+      <div>
+        <strong>${esc(t.code)}</strong>
+        <span>${esc(t.participant.name)}</span>
+        <small>Números: ${esc(t.numbers.join(", "))}</small>
+      </div>
+      <div class="row-actions">
+        <b>${money(t.total)}</b>
+        <button class="primary" onclick="openTicket('${esc(t.id)}')">Ver</button>
+        <button class="ghost danger" onclick="deleteTicket('${esc(t.id)}')">Eliminar</button>
+      </div>
+    </article>
+  `).join("");
 }
 
-async function checkCurrentOrder(){
-  if(!currentOrder||!currentBuyer){msg('paymentMsg','No hay un pedido activo.','error');return}
-  msg('paymentMsg','Comprobando…');
-  const {data,error}=await db.rpc('get_raffle_order_status',{p_order_id:currentOrder.order_id,p_phone:currentBuyer.phone});
-  if(error){msg('paymentMsg','No se pudo consultar el pedido.','error');return}
-  if(data.status==='paid'){await makeTicketFromStatus(data);return}
-  if(data.status==='pending'){msg('paymentMsg','El pago todavía no ha sido confirmado.','');return}
-  msg('paymentMsg','Este pedido ya no está pendiente.','error');
-}
-async function makeTicketFromStatus(statusData){
-  const nums=(statusData.tickets||[]).map(t=>t.number).sort((a,b)=>a-b); if(!nums.length){msg('paymentMsg','El pago figura confirmado, pero aún no hay tickets disponibles.','error');return}
-  document.getElementById('ticketNumbers').textContent=nums.map(formatNum).join(' • ');
-  document.getElementById('ticketData').innerHTML='<b>Nombre</b><span>'+esc(statusData.buyer_name)+'</span><b>WhatsApp</b><span>'+esc(statusData.buyer_phone)+'</span><b>Email</b><span>'+esc(statusData.buyer_email||'—')+'</span><b>Total</b><span>'+money(statusData.amount)+'</span>';
-  document.getElementById('ticketCode').textContent='RVP-'+String(statusData.order_id).slice(0,8).toUpperCase();
-  const q=document.getElementById('qrcode');q.innerHTML='';new QRCode(q,{text:location.href.split('#')[0]+'?ticket='+encodeURIComponent(statusData.order_id),width:150,height:150}); show('ticket');
+function openTicket(id) {
+  const found = tickets.find(t => String(t.id) === String(id));
+  if (!found) return alert("Ticket no encontrado.");
+  currentTicket = found;
+  show("ticket");
 }
 
-async function checkExistingSession(){const {data}=await db.auth.getSession(); if(data.session)show('admin')}
-async function adminLogin(){
-  const email=document.getElementById('adminEmail').value.trim(),password=document.getElementById('adminPassword').value;
-  if(!email||!password){msg('loginMsg','Introduce email y contraseña.','error');return}
-  msg('loginMsg','Entrando…');
-  const {data,error}=await db.auth.signInWithPassword({email,password});
-  if(error){msg('loginMsg',error.message||'No se pudo iniciar sesión.','error');return}
-  const {data:isAdmin,error:adminError}=await db.rpc('is_raffle_admin');
-  if(adminError||!isAdmin){await db.auth.signOut();msg('loginMsg','Esta cuenta no está autorizada como administrador.','error');return}
-  msg('loginMsg','');show('admin');
+function verifyManual() {
+  const code = document.getElementById("verifyCode").value.trim().toUpperCase();
+  verifyCode(code);
 }
-async function adminLogout(){await db.auth.signOut();show('home')}
-async function loadAdmin(){
-  const {data:session}=await db.auth.getSession(); if(!session.session){show('adminLogin');return}
-  msg('adminMsg','Cargando panel…');
-  const {data,error}=await db.rpc('get_raffle_admin_data',{p_raffle_id:RAFFLE_ID});
-  if(error){msg('adminMsg',error.message||'No autorizado.','error');return}
-  const raffle=data.raffle,tickets=data.tickets||[],orders=data.orders||[]; const sold=tickets.filter(x=>x.status==='sold'||x.status==='winner').length; const reserved=tickets.filter(x=>x.status==='reserved').length;
-  document.getElementById('stats').innerHTML='<div class="stat"><small>Total</small><b>'+raffle.total_tickets+'</b></div><div class="stat"><small>Vendidos</small><b>'+sold+'</b></div><div class="stat"><small>Reservados</small><b>'+reserved+'</b></div><div class="stat"><small>Ingresos</small><b>'+money(sold*Number(raffle.ticket_price))+'</b></div>';
-  document.getElementById('soldList').innerHTML=tickets.map(t=>'<p><b>'+formatNum(t.number)+'</b> '+esc(t.buyer_name||'Reserva')+' <small>'+esc(t.status)+'</small>'+(t.status==='reserved'&&t.payment_reference?'<button class="mini" onclick="confirmPayment(\''+esc(t.payment_reference)+'\')">Confirmar pago</button>':'')+'</p>').join('')||'<p>No hay reservas ni ventas.</p>';
-  document.getElementById('ordersList').innerHTML=orders.map(o=>'<p><b>'+esc(o.payment_status)+'</b> '+esc(o.buyer_name)+' <span class="order-amount">'+money(o.amount)+'</span><br><small>'+esc(o.id)+'</small>'+(o.payment_status==='pending'?'<button class="mini" onclick="confirmPayment(\''+esc(o.id)+'\')">Confirmar pago</button>':'')+'</p>').join('')||'<p>No hay pedidos.</p>';
-  document.getElementById('winner').innerHTML=raffle.winner_ticket_id?'<b>Sorteo realizado</b>':'—';msg('adminMsg','');
-}
-async function confirmPayment(orderId){
-  if(!confirm('¿Confirmar que este pedido ha sido pagado?'))return;
-  const {error}=await db.rpc('confirm_raffle_order',{p_order_id:orderId,p_payment_reference:'MANUAL-'+new Date().toISOString()});
-  if(error){msg('adminMsg',error.message||'No se pudo confirmar.','error');return}
-  msg('adminMsg','Pago confirmado correctamente.','success');await loadAdmin();
-}
-async function draw(){
-  if(!confirm('El sorteo es irreversible. ¿Quieres realizarlo ahora?'))return;
-  const {data,error}=await db.rpc('draw_raffle',{p_raffle_id:RAFFLE_ID});
-  if(error){msg('adminMsg',error.message||'No se pudo realizar el sorteo.','error');return}
-  document.getElementById('winner').innerHTML=formatNum(data.number)+'<small>'+esc(data.buyer_name)+'</small>';msg('adminMsg','Sorteo realizado correctamente.','success');
-}
-function shareWhatsApp(){const text='Mi ticket de RIFAS VIP PERÚ: '+document.getElementById('ticketNumbers').textContent+' — '+document.getElementById('ticketCode').textContent;window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank')}
 
-db.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'&&document.getElementById('admin').classList.contains('active'))show('home')});
-loadNumbers();
+function verifyCode(code) {
+  const result = tickets.find(t => t.code.toUpperCase() === code);
+  const box = document.getElementById("verifyResult");
+
+  if (!result) {
+    box.className = "verify-result invalid";
+    box.innerHTML = "<strong>❌ TICKET NO ENCONTRADO</strong>";
+    return;
+  }
+
+  if (result.status !== "VALIDO") {
+    box.className = "verify-result invalid";
+    box.innerHTML = `<strong>❌ TICKET NO VÁLIDO</strong><p>${esc(result.code)}</p>`;
+    return;
+  }
+
+  box.className = "verify-result valid";
+  box.innerHTML = `
+    <strong>✅ TICKET VÁLIDO</strong>
+    <p><b>${esc(result.code)}</b></p>
+    <p>${esc(result.participant.name)}</p>
+    <p>Números: ${esc(result.numbers.join(", "))}</p>
+  `;
+}
+
+function resetScannerUI() {
+  document.getElementById("verifyResult").innerHTML = "";
+}
+
+async function startScanner() {
+  if (typeof Html5Qrcode === "undefined") {
+    alert("El lector QR todavía no está disponible. Comprueba tu conexión a internet.");
+    return;
+  }
+
+  if (scanner) return;
+
+  scanner = new Html5Qrcode("reader");
+
+  try {
+    await scanner.start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: { width: 230, height: 230 } },
+      async decodedText => {
+        await stopScanner();
+        verifyCode(decodedText.trim());
+      },
+      () => {}
+    );
+  } catch (error) {
+    scanner = null;
+    alert("No se pudo abrir la cámara. Comprueba que el navegador tenga permiso para usarla.");
+  }
+}
+
+async function stopScanner() {
+  if (!scanner) return;
+  try { await scanner.stop(); } catch {}
+  try { scanner.clear(); } catch {}
+  scanner = null;
+}
+
+function shareWhatsApp() {
+  if (!currentTicket) return;
+
+  const text = `🎟️ RIFAS VIP PERÚ
+
+Ticket: ${currentTicket.code}
+Participante: ${currentTicket.participant.name}
+Número(s): ${currentTicket.numbers.join(", ")}
+Premio: ${currentTicket.prize || "—"}
+Sorteo: ${formatDate(currentTicket.drawDate)}
+
+✅ Ticket registrado correctamente.`;
+
+  window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank");
+}
+
+function clearCreateForm() {
+  ["name","phone","email","prize","numbersInput"].forEach(id => {
+    document.getElementById(id).value = "";
+  });
+  document.getElementById("raffleName").value = "RIFAS VIP PERÚ";
+  document.getElementById("price").value = "10";
+  document.getElementById("drawDate").value = "";
+}
+
+function deleteTicket(id) {
+  const ticket = tickets.find(t => String(t.id) === String(id));
+  if (!ticket) return;
+
+  if (!confirm("¿Eliminar " + ticket.code + "?")) return;
+
+  tickets = tickets.filter(t => String(t.id) !== String(id));
+  saveTickets();
+  renderTickets();
+}
+
+function deleteAllTickets() {
+  if (!tickets.length) return alert("No hay tickets.");
+
+  const confirmation = prompt("Escribe BORRAR para eliminar todos los tickets.");
+  if (confirmation !== "BORRAR") return;
+
+  tickets = [];
+  saveTickets();
+  renderTickets();
+  alert("Todos los tickets fueron eliminados.");
+}
+
+function exportTickets() {
+  if (!tickets.length) return alert("No hay tickets para exportar.");
+
+  const blob = new Blob([JSON.stringify(tickets, null, 2)], {
+    type: "application/json"
+  });
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "rifas-vip-peru-backup.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importTickets(file) {
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    try {
+      const imported = JSON.parse(reader.result);
+      if (!Array.isArray(imported)) throw new Error();
+
+      const existingIds = new Set(tickets.map(t => String(t.id)));
+      const fresh = imported.filter(t => t && t.code && !existingIds.has(String(t.id)));
+
+      tickets = tickets.concat(fresh);
+      saveTickets();
+      renderTickets();
+
+      alert(`Se importaron ${fresh.length} tickets.`);
+    } catch {
+      alert("El archivo no es una copia válida de RIFAS VIP PERÚ.");
+    }
+  };
+
+  reader.readAsText(file);
+}
+
+function drawWinner() {
+  const entries = tickets.flatMap(t => t.numbers.map(number => ({ number, ticket: t })));
+  const winnerBox = document.getElementById("winner");
+
+  if (!entries.length) {
+    winnerBox.innerHTML = "<strong>No hay números registrados.</strong>";
+    return;
+  }
+
+  const winner = entries[Math.floor(Math.random() * entries.length)];
+
+  winnerBox.innerHTML = `
+    <small>GANADOR</small>
+    <strong>${esc(winner.number)}</strong>
+    <p>${esc(winner.ticket.participant.name)}</p>
+    <span>Ticket ${esc(winner.ticket.code)}</span>
+  `;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("drawDate").min = new Date().toISOString().split("T")[0];
+});
