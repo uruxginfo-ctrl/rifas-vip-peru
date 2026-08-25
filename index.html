@@ -1,170 +1,120 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#05040f">
-<title>RIFAS VIP PERÚ</title>
-<link rel="stylesheet" href="styles.css">
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<script src="https://unpkg.com/html5-qrcode" defer></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>RIFAS VIP PERÚ · Panel privado</title>
+  <meta name="theme-color" content="#090512">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="page">
-
-<header class="header">
-  <button class="logo" onclick="show('home')">RIFAS <b>VIP</b> <small>PERÚ</small></button>
-  <div class="live"><i></i> Panel privado</div>
-</header>
-
-<main>
-
-<section id="home" class="view active">
-  <div class="vip-action-wrap">
-    <button class="vip-action" onclick="show('create')">
-      <span class="vip-ticket">🎟</span>
-      <span>Generar ticket</span>
-      <b>→</b>
-    </button>
+<div id="loginView" class="screen login-screen">
+  <div class="login-bg-wheel" aria-hidden="true"></div>
+  <header class="login-brand">RIFAS <b>VIP</b><small>PERÚ</small></header>
+  <div class="login-card">
+    <div class="ticket-icon">🎟️</div>
+    <h1>ACCEDE A <span>TU CUENTA</span></h1>
+    <p class="muted">Panel privado de administración</p>
+    <label>Código de acceso</label>
+    <div class="input-wrap"><span>🔒</span><input id="accessCode" type="password" placeholder="Introduce tu código" autocomplete="current-password"></div>
+    <label class="remember"><input id="remember" type="checkbox" checked> Recordarme</label>
+    <button id="loginBtn" class="btn primary">INGRESAR</button>
+    <p id="loginMsg" class="error"></p>
   </div>
-
-  <div class="vip-hero">
-    <div class="vip-hero-glow"></div>
-    <img class="vip-hero-image" src="rifas-vip-peru.png" alt="RIFAS VIP PERÚ">
+  <div class="login-features">
+    <div>🏆 <b>SORTEOS</b><small>EN VIVO</small></div>
+    <div>🛡️ <b>100%</b><small>CONTROLADO</small></div>
+    <div>⚡ <b>RESULTADOS</b><small>AL INSTANTE</small></div>
+    <div>🎁 <b>PREMIOS</b><small>ASOMBROSOS</small></div>
   </div>
-
-  <div class="home-actions">
-    <button class="primary" onclick="show('create')">＋ Crear ticket</button>
-    <button class="ghost" onclick="show('tickets')">📁 Mis tickets</button>
-    <button class="ghost" onclick="show('verify')">📷 Verificar QR</button>
-    <button class="ghost" onclick="show('draw')">🏆 Realizar sorteo</button>
-  </div>
-
-  <div class="vip-mini-info">
-    <div><span>🔐</span><strong>USO PRIVADO</strong><small>Solo para generar y controlar tickets</small></div>
-    <div><span>🎟</span><strong>TICKETS QR</strong><small>Código único para cada participante</small></div>
-    <div><span>📁</span><strong>GUARDADO LOCAL</strong><small>Los tickets quedan en este dispositivo</small></div>
-  </div>
-
-  <div class="vip-footer">
-    <div class="vip-footer-line"></div>
-    <h2>RIFAS <b>VIP</b> PERÚ</h2>
-    <div class="vip-footer-brand">U R U <b>×</b> G</div>
-  </div>
-</section>
-
-<section id="create" class="view">
-  <div class="panel">
-    <button class="back" onclick="show('home')">←</button>
-    <div><small>RIFAS VIP PERÚ</small><h1>Generar ticket</h1><p>Crea un ticket y genera su QR automáticamente.</p></div>
-  </div>
-
-  <div class="form-layout">
-    <div class="form-card">
-      <label>Nombre completo
-        <input id="name" autocomplete="name" placeholder="Nombre del participante">
-      </label>
-      <label>WhatsApp
-        <input id="phone" inputmode="tel" autocomplete="tel" placeholder="987 654 321">
-      </label>
-      <label>Email <small>(opcional)</small>
-        <input id="email" type="email" autocomplete="email" placeholder="tu@email.com">
-      </label>
-      <label>Nombre de la rifa
-        <input id="raffleName" value="RIFAS VIP PERÚ">
-      </label>
-      <label>Premio
-        <input id="prize" placeholder="Ej.: iPhone, reloj, premio en efectivo...">
-      </label>
-      <label>Fecha del sorteo
-        <input id="drawDate" type="date">
-      </label>
-    </div>
-
-    <div class="pay-card">
-      <small>Números participantes</small>
-      <p class="muted">Escribe los números separados por coma.</p>
-      <input id="numbersInput" class="big-input" placeholder="0001, 0025, 0180">
-      <label>Precio por número
-        <input id="price" type="number" min="0" step="0.01" value="10">
-      </label>
-      <div class="notice">No hay pagos ni reservas automáticas. Tú decides cuándo un ticket queda registrado.</div>
-      <button class="primary wide" onclick="createTicket()">GENERAR TICKET QR</button>
-      <button class="ghost wide" onclick="clearCreateForm()">Limpiar</button>
-    </div>
-  </div>
-</section>
-
-<section id="ticket" class="view">
-  <div class="ticket">
-    <div class="ticket-head"><b>RIFAS <em>VIP</em></b><small>PERÚ</small></div>
-    <div class="ok">✓</div>
-    <h1>¡Ticket generado!</h1>
-    <p>Este ticket ha quedado guardado en la aplicación.</p>
-    <div class="ticket-numbers" id="ticketNumbers">—</div>
-    <div class="ticket-data" id="ticketData"></div>
-    <div id="qrcode" class="qr"></div>
-    <b id="ticketCode">—</b>
-    <div class="ticket-actions">
-      <button class="primary" onclick="shareWhatsApp()">Compartir por WhatsApp</button>
-      <button class="ghost" onclick="window.print()">Guardar / imprimir</button>
-      <button class="ghost" onclick="show('tickets')">Ver mis tickets</button>
-      <button class="ghost" onclick="show('home')">Volver al inicio</button>
-    </div>
-  </div>
-</section>
-
-<section id="tickets" class="view">
-  <div class="panel">
-    <button class="back" onclick="show('home')">←</button>
-    <div><small>RIFAS VIP PERÚ</small><h1>Mis tickets</h1><p>Todos los tickets guardados en este dispositivo.</p></div>
-  </div>
-
-  <div class="search-box">
-    <input id="ticketSearch" placeholder="Buscar por código, nombre, WhatsApp o número..." oninput="renderTickets()">
-  </div>
-
-  <div id="ticketsList" class="tickets-list"></div>
-
-  <div class="backup-actions">
-    <button class="ghost" onclick="exportTickets()">⬇ Exportar copia</button>
-    <label class="ghost file-button">⬆ Importar copia
-      <input type="file" accept=".json,application/json" onchange="importTickets(this.files[0])">
-    </label>
-    <button class="ghost danger" onclick="deleteAllTickets()">Eliminar todos</button>
-  </div>
-</section>
-
-<section id="verify" class="view">
-  <div class="panel">
-    <button class="back" onclick="show('home')">←</button>
-    <div><small>RIFAS VIP PERÚ</small><h1>Verificar ticket</h1><p>Escanea el QR o introduce el código.</p></div>
-  </div>
-
-  <div class="verify-card">
-    <div id="reader"></div>
-    <button class="primary wide" onclick="startScanner()">📷 Abrir cámara y escanear</button>
-    <input id="verifyCode" class="big-input" placeholder="Ej.: VIP-000001">
-    <button class="ghost wide" onclick="verifyManual()">Verificar código</button>
-    <div id="verifyResult" class="verify-result"></div>
-  </div>
-</section>
-
-<section id="draw" class="view">
-  <div class="panel">
-    <button class="back" onclick="show('home')">←</button>
-    <div><small>RIFAS VIP PERÚ</small><h1>Sorteo</h1><p>Selecciona aleatoriamente un número entre tus tickets registrados.</p></div>
-  </div>
-
-  <div class="center-card">
-    <div id="winner" class="winner-result">—</div>
-    <button class="primary wide" onclick="drawWinner()">REALIZAR SORTEO</button>
-  </div>
-</section>
-
-</main>
+  <div class="ux">Uru<span>X</span>G <small>SISTEMA PROFESIONAL DE RIFAS Y SORTEOS</small></div>
 </div>
 
+<div id="appView" class="app hidden">
+  <header class="topbar">
+    <div class="brand">RIFAS <b>VIP</b><small>PERÚ</small></div>
+    <nav>
+      <button data-view="generator" class="nav-btn active">🎟 Generar ticket</button>
+      <button data-view="tickets" class="nav-btn">▣ Mis tickets</button>
+      <button data-view="verify" class="nav-btn">⌗ Verificar QR</button>
+      <button data-view="draw" class="nav-btn">🏆 Realizar sorteo</button>
+    </nav>
+    <button id="logoutBtn" class="status">● Panel privado</button>
+  </header>
+
+  <main>
+    <section id="generator" class="view active">
+      <div class="section-title"><div class="section-icon">🎟️</div><div><h2>Generar ticket</h2><p>Crea un ticket y genera su QR automáticamente.</p></div></div>
+      <div class="generator-grid">
+        <div class="card participant">
+          <h3>Información del participante</h3>
+          <label>Nombre completo<input id="name" placeholder="Nombre del participante"></label>
+          <label>DNI<input id="dni" inputmode="numeric" maxlength="8" placeholder="DNI"></label>
+          <label>WhatsApp<input id="phone" inputmode="tel" placeholder="987 654 321"></label>
+          <label>Email <small>(opcional)</small><input id="email" type="email" placeholder="tu@email.com"></label>
+          <label>Nombre de la rifa<input id="raffleName" value="RIFAS VIP PERÚ"></label>
+          <label>Premio<input id="prize" placeholder="Ej. Moto, iPhone, premio en efectivo..."></label>
+          <label>Fecha del sorteo<input id="drawDate" type="date"></label>
+        </div>
+
+        <div class="card numbers-panel">
+          <div class="numbers-head">
+            <div><h3>Seleccionar números</h3><p>Elige los números disponibles para este participante.</p></div>
+            <div class="number-settings">
+              <label>Total <select id="numberCount"><option value="1000">1.000</option><option value="1500" selected>1.500</option></select></label>
+              <label>Precio (S/) <input id="price" type="number" min="0" step="0.01" value="10"></label>
+            </div>
+          </div>
+          <div class="legend"><span><i class="dot green"></i> Disponible</span><span><i class="dot purple"></i> Seleccionado</span><span><i class="dot red"></i> No disponible</span></div>
+          <div id="numberGrid" class="number-grid"></div>
+          <button id="moreNumbers" class="more-btn">VER MÁS NÚMEROS</button>
+        </div>
+      </div>
+
+      <div class="card selected-card">
+        <div><h3>Seleccionados <span id="selectedCount">(0)</span></h3><div id="selectedList" class="selected-list"></div></div>
+        <div class="total">Total a pagar: <b id="total">S/ 0.00</b></div>
+      </div>
+
+      <div class="actions"><button id="clearSelection" class="btn danger">🗑 Limpiar selección</button><button id="generateBtn" class="btn primary">⌗ GENERAR TICKET QR</button></div>
+      <div id="ticketResult"></div>
+    </section>
+
+    <section id="tickets" class="view">
+      <div class="section-title"><div class="section-icon">▣</div><div><h2>Mis tickets</h2><p>Todos los tickets guardados en este dispositivo.</p></div></div>
+      <div class="card">
+        <input id="ticketSearch" class="search" placeholder="Buscar por código, nombre, DNI, WhatsApp o número...">
+        <div id="ticketsList"></div>
+        <div class="data-actions"><button id="exportBtn" class="btn ghost">↓ Exportar copia</button><label class="btn ghost import-label">↑ Importar copia<input id="importInput" type="file" accept=".json"></label><button id="deleteAllBtn" class="btn danger">Eliminar todos</button></div>
+      </div>
+    </section>
+
+    <section id="verify" class="view">
+      <div class="section-title"><div class="section-icon">⌗</div><div><h2>Verificar ticket</h2><p>Introduce el código del ticket para comprobar sus datos.</p></div></div>
+      <div class="card verify-card"><input id="verifyCode" class="search" placeholder="Ej. VIP-000001"><button id="verifyBtn" class="btn primary">VERIFICAR</button><div id="verifyResult"></div></div>
+    </section>
+
+    <section id="draw" class="view">
+      <div class="section-title"><div class="section-icon">🏆</div><div><h2>Realizar sorteo</h2><p>Selecciona al azar tres números entre los tickets registrados.</p></div></div>
+      <div class="draw-layout">
+        <div class="card draw-card">
+          <div class="draw-wheel-wrap"><div id="wheel" class="wheel"><div class="wheel-center">RIFA<br><b>VIP</b></div></div></div>
+          <button id="spinBtn" class="btn primary spin">🎯 GIRAR RULETA</button>
+          <p class="muted center">El sorteo utiliza los números de tickets registrados y evita repetir un número ganador.</p>
+        </div>
+        <div class="card winners">
+          <h3>Números ganadores</h3>
+          <div class="winner"><span>1.er PREMIO</span><b id="winner1">—</b></div>
+          <div class="winner"><span>2.º PREMIO</span><b id="winner2">—</b></div>
+          <div class="winner"><span>3.er PREMIO</span><b id="winner3">—</b></div>
+          <button id="clearWinners" class="btn ghost">Limpiar resultado</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
