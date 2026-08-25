@@ -1,45 +1,824 @@
-/* The visible text is already part of the master image. */
-</style>
-</head>
-<body>
-<div id="loginView" class="screen login-screen">
-  <div class="login-art">
-    <div class="login-card">
-      <div class="input-wrap"><span>🔒</span><input id="loginEmail" type="email" autocomplete="username" placeholder="Correo Gmail"></div>
-      <div class="input-wrap"><span>🔒</span><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Contraseña"><input id="accessCode" type="hidden"></div>
-      <label class="remember"><input id="remember" type="checkbox" checked></label>
-      <button id="forgotBtn" class="forgot-hit" type="button" aria-label="¿Olvidaste tu contraseña?"></button>
-      <button id="eyeBtn" class="eye-hit" type="button" aria-label="Mostrar contraseña"></button>
-      <button id="loginBtn" class="btn primary" type="button">INGRESAR</button>
-      <p id="loginMsg" class="error"></p>
-    </div>
-    <div class="login-features"><div>🏆<b>SORTEOS</b><small>EN VIVO</small></div><div>🛡️<b>100%</b><small>CONFIABLE</small></div><div>⚡<b>RESULTADOS</b><small>AL INSTANTE</small></div><div>🎁<b>PREMIOS</b><small>ASOMBROSOS</small></div></div>
-    <div class="ux">Uru<span>X</span>G <small>SISTEMA PROFESIONAL DE RIFAS Y SORTEOS</small></div>
-  </div>
-</div>
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 
-<div id="appView" class="app hidden">
-  <header class="topbar"><div class="brand">RIFAS <b>VIP</b><small>PERÚ</small></div><nav>
-    <button data-view="generator" class="nav-btn active">🎟 Generar ticket</button><button data-view="tickets" class="nav-btn">▣ Mis tickets</button><button data-view="verify" class="nav-btn">⌗ Verificar QR</button><button data-view="draw" class="nav-btn">🏆 Realizar sorteo</button>
-  </nav><button id="logoutBtn" class="status">● Panel privado</button></header>
-  <main>
-    <section id="generator" class="view active"><div class="section-title"><div class="section-icon">🎟️</div><div><h2>Generar ticket</h2><p>Crea un ticket y genera su QR automáticamente.</p></div></div>
-      <div class="generator-grid"><div class="card participant"><h3>Información del participante</h3>
-        <label>Nombre completo<input id="name" placeholder="Nombre del participante"></label><label>DNI<input id="dni" inputmode="numeric" maxlength="8" placeholder="DNI"></label><label>WhatsApp<input id="phone" inputmode="tel" placeholder="987 654 321"></label><label>Email <small>(opcional)</small><input id="email" type="email" placeholder="tu@email.com"></label><label>Nombre de la rifa<input id="raffleName" value="RIFAS VIP PERÚ"></label><label>Premio<input id="prize" placeholder="Ej. Moto, iPhone, premio en efectivo..."></label><label>Fecha del sorteo<input id="drawDate" type="date"></label>
-      </div><div class="card numbers-panel"><div class="numbers-head"><div><h3>Seleccionar números</h3><p>Elige los números disponibles para este participante.</p></div><div class="number-settings"><label>Total <select id="numberCount"><option value="1000">1.000</option><option value="1500" selected>1.500</option></select></label><label>Precio (S/) <input id="price" type="number" min="0" step="0.01" value="10"></label></div></div><div class="legend"><span><i class="dot green"></i> Disponible</span><span><i class="dot purple"></i> Seleccionado</span><span><i class="dot red"></i> No disponible</span></div><div id="numberGrid" class="number-grid"></div><button id="moreNumbers" class="more-btn">VER MÁS NÚMEROS</button></div></div>
-      <div class="card selected-card"><div><h3>Seleccionados <span id="selectedCount">(0)</span></h3><div id="selectedList" class="selected-list"></div></div><div class="total">Total a pagar: <b id="total">S/ 0.00</b></div></div><div class="actions"><button id="clearSelection" class="btn danger">🗑 Limpiar selección</button><button id="generateBtn" class="btn primary">⌗ GENERAR TICKET QR</button></div><div id="ticketResult"></div>
-    </section>
-    <section id="tickets" class="view"><div class="section-title"><div class="section-icon">▣</div><div><h2>Mis tickets</h2><p>Todos los tickets guardados en este dispositivo.</p></div></div><div class="card"><input id="ticketSearch" class="search" placeholder="Buscar por código, nombre, DNI, WhatsApp o número..."><div id="ticketsList"></div><div class="data-actions"><button id="exportBtn" class="btn ghost">↓ Exportar copia</button><label class="btn ghost import-label">↑ Importar copia<input id="importInput" type="file" accept=".json"></label><button id="deleteAllBtn" class="btn danger">Eliminar todos</button></div></div></section>
-    <section id="verify" class="view"><div class="section-title"><div class="section-icon">⌗</div><div><h2>Verificar ticket</h2><p>Introduce el código del ticket para comprobar sus datos.</p></div></div><div class="card verify-card"><input id="verifyCode" class="search" placeholder="Ej. VIP-000001"><button id="verifyBtn" class="btn primary">VERIFICAR</button><div id="verifyResult"></div></div></section>
-    <section id="draw" class="view"><div class="section-title"><div class="section-icon">🏆</div><div><h2>Realizar sorteo</h2><p>Selecciona al azar tres números entre los tickets registrados.</p></div></div><div class="draw-layout"><div class="card draw-card"><div class="draw-wheel-wrap"><div id="wheel" class="wheel"><div class="wheel-center">RIFA<br><b>VIP</b></div></div></div><button id="spinBtn" class="btn primary spin">🎯 GIRAR RULETA</button><p class="muted center">El sorteo utiliza los números de tickets registrados y evita repetir un número ganador.</p></div><div class="card winners"><h3>Números ganadores</h3><div class="winner"><span>1.er PREMIO</span><b id="winner1">—</b></div><div class="winner"><span>2.º PREMIO</span><b id="winner2">—</b></div><div class="winner"><span>3.er PREMIO</span><b id="winner3">—</b></div><button id="clearWinners" class="btn ghost">Limpiar resultado</button></div></div></section>
+  <title>RIFAS VIP PERÚ · Panel privado</title>
+
+  <meta name="theme-color" content="#07040f">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<!-- =====================================================
+     PORTADA / ACCESO
+===================================================== -->
+
+<section id="loginView" class="login-screen">
+
+  <div class="login-glow glow-a"></div>
+  <div class="login-glow glow-b"></div>
+
+  <header class="login-header">
+
+    <div class="brand-main">
+      RIFAS <span>VIP</span><small>PERÚ</small>
+    </div>
+
+    <div class="secure-pill">
+      <i></i>
+      ACCESO PRIVADO
+    </div>
+
+  </header>
+
+
+  <main class="login-content">
+
+    <div class="login-copy">
+
+      <div class="eyebrow">
+        <span></span>
+        SISTEMA DE ADMINISTRACIÓN
+      </div>
+
+      <h1>
+        Tu panel.<br>
+        <strong>Tu control.</strong>
+      </h1>
+
+      <p>
+        Gestiona tus rifas, participantes, tickets y resultados
+        desde un único lugar.
+      </p>
+
+    </div>
+
+
+    <div class="login-card">
+
+      <div class="card-top">
+
+        <div class="lock-mark">
+          🔐
+        </div>
+
+        <div>
+
+          <span class="card-kicker">
+            PANEL PRIVADO
+          </span>
+
+          <h2>
+            Accede a tu cuenta
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <label for="accessCode">
+        Código de acceso
+      </label>
+
+
+      <div class="access-input">
+
+        <span class="access-icon">
+          🔒
+        </span>
+
+        <input
+          id="accessCode"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Introduce tu código"
+        >
+
+        <span class="access-status"></span>
+
+      </div>
+
+
+      <label class="remember-row">
+
+        <input
+          id="remember"
+          type="checkbox"
+          checked
+        >
+
+        <span>
+          Recordarme en este dispositivo
+        </span>
+
+      </label>
+
+
+      <button
+        id="loginBtn"
+        class="login-button"
+        type="button"
+      >
+        INGRESAR
+        <span>→</span>
+      </button>
+
+
+      <div
+        id="loginMsg"
+        class="login-message"
+      ></div>
+
+
+      <div class="login-security">
+        🔒 Conexión protegida · Solo personal autorizado
+      </div>
+
+    </div>
+
   </main>
-</div>
+
+
+  <footer class="login-footer">
+
+    <div>
+      <b>01</b>
+      <span>
+        Rifas<br>
+        <em>organizadas</em>
+      </span>
+    </div>
+
+    <div>
+      <b>02</b>
+      <span>
+        Tickets<br>
+        <em>controlados</em>
+      </span>
+    </div>
+
+    <div>
+      <b>03</b>
+      <span>
+        Resultados<br>
+        <em>instantáneos</em>
+      </span>
+    </div>
+
+    <div class="footer-right">
+      RIFAS VIP
+      <strong>PERÚ</strong>
+      <small>ADMINISTRACIÓN PRIVADA</small>
+    </div>
+
+  </footer>
+
+</section>
+
+
+<!-- =====================================================
+     PANEL PRIVADO
+===================================================== -->
+
+<section
+  id="appView"
+  class="hidden app-shell"
+>
+
+  <header class="topbar">
+
+    <div class="brand">
+      RIFAS <b>VIP</b>
+      <small>PERÚ</small>
+    </div>
+
+
+    <nav>
+
+      <button
+        class="nav-btn active"
+        data-view="generator"
+        type="button"
+      >
+        🎟 Generador
+      </button>
+
+      <button
+        class="nav-btn"
+        data-view="tickets"
+        type="button"
+      >
+        ▣ Tickets
+      </button>
+
+      <button
+        class="nav-btn"
+        data-view="verify"
+        type="button"
+      >
+        ⌗ Verificar
+      </button>
+
+      <button
+        class="nav-btn"
+        data-view="draw"
+        type="button"
+      >
+        🏆 Sorteo
+      </button>
+
+    </nav>
+
+
+    <button
+      id="logoutBtn"
+      class="status"
+      type="button"
+    >
+      ● Cerrar sesión
+    </button>
+
+  </header>
+
+
+  <main>
+
+
+    <!-- =================================================
+         GENERADOR
+    ================================================== -->
+
+    <section
+      id="generator"
+      class="view active"
+    >
+
+      <div class="section-title">
+
+        <div class="section-icon">
+          🎟️
+        </div>
+
+        <div>
+
+          <h2>
+            Generador de tickets
+          </h2>
+
+          <p>
+            Crea participaciones y asigna números disponibles.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="generator-grid">
+
+
+        <!-- PARTICIPANTE -->
+
+        <div class="card participant">
+
+          <h3>
+            Datos del participante
+          </h3>
+
+
+          <label>
+            Nombre completo
+
+            <input
+              id="name"
+              type="text"
+              placeholder="Nombre y apellidos"
+            >
+          </label>
+
+
+          <label>
+            DNI
+
+            <input
+              id="dni"
+              inputmode="numeric"
+              maxlength="8"
+              placeholder="8 dígitos"
+            >
+          </label>
+
+
+          <label>
+            WhatsApp
+
+            <input
+              id="phone"
+              type="tel"
+              placeholder="Número de contacto"
+            >
+          </label>
+
+
+          <label>
+            Email
+
+            <input
+              id="email"
+              type="email"
+              placeholder="correo@ejemplo.com"
+            >
+          </label>
+
+
+          <label>
+            Nombre de la rifa
+
+            <input
+              id="raffleName"
+              type="text"
+              value="RIFAS VIP PERÚ"
+            >
+          </label>
+
+
+          <label>
+            Premio
+
+            <input
+              id="prize"
+              type="text"
+              placeholder="Premio de la rifa"
+            >
+          </label>
+
+
+          <label>
+            Fecha del sorteo
+
+            <input
+              id="drawDate"
+              type="date"
+            >
+          </label>
+
+
+          <label>
+            Precio por número
+
+            <input
+              id="price"
+              type="number"
+              min="0"
+              step="0.01"
+              value="10"
+            >
+          </label>
+
+        </div>
+
+
+        <!-- NÚMEROS -->
+
+        <div class="card numbers-panel">
+
+          <div class="numbers-head">
+
+            <div>
+
+              <h3>
+                Números disponibles
+              </h3>
+
+              <p>
+                Selecciona los números que quieras asignar.
+              </p>
+
+            </div>
+
+
+            <div class="number-settings">
+
+              <label>
+                Total
+
+                <select id="numberCount">
+
+                  <option value="1000">
+                    1.000
+                  </option>
+
+                  <option
+                    value="1500"
+                    selected
+                  >
+                    1.500
+                  </option>
+
+                </select>
+
+              </label>
+
+            </div>
+
+          </div>
+
+
+          <div class="legend">
+
+            <span>
+              <i class="dot green"></i>
+              Disponible
+            </span>
+
+            <span>
+              <i class="dot purple"></i>
+              Seleccionado
+            </span>
+
+            <span>
+              <i class="dot red"></i>
+              No disponible
+            </span>
+
+          </div>
+
+
+          <div
+            id="numberGrid"
+            class="number-grid"
+          ></div>
+
+
+          <button
+            id="moreNumbers"
+            class="more-btn"
+            type="button"
+          >
+            VER MÁS NÚMEROS
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- SELECCIONADOS -->
+
+      <div class="card selected-card">
+
+        <div>
+
+          <h3>
+            Seleccionados
+            <span id="selectedCount">(0)</span>
+          </h3>
+
+          <div
+            id="selectedList"
+            class="selected-list"
+          ></div>
+
+        </div>
+
+
+        <div class="total">
+
+          Total a pagar:
+
+          <b id="total">
+            S/ 0.00
+          </b>
+
+        </div>
+
+      </div>
+
+
+      <!-- ACCIONES -->
+
+      <div class="actions">
+
+        <button
+          id="clearSelection"
+          class="btn danger"
+          type="button"
+        >
+          🗑 Limpiar selección
+        </button>
+
+
+        <button
+          id="generateBtn"
+          class="btn primary"
+          type="button"
+        >
+          GENERAR TICKET QR
+        </button>
+
+      </div>
+
+
+      <div id="ticketResult"></div>
+
+    </section>
+
+
+    <!-- =================================================
+         TICKETS
+    ================================================== -->
+
+    <section
+      id="tickets"
+      class="view"
+    >
+
+      <div class="section-title">
+
+        <div class="section-icon">
+          📋
+        </div>
+
+        <div>
+
+          <h2>
+            Tickets registrados
+          </h2>
+
+          <p>
+            Consulta y administra las participaciones.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <input
+          id="ticketSearch"
+          class="search"
+          type="search"
+          placeholder="Buscar por código, nombre, DNI, WhatsApp o número..."
+        >
+
+
+        <div id="ticketsList"></div>
+
+
+        <div class="data-actions">
+
+          <button
+            id="exportBtn"
+            class="btn ghost"
+            type="button"
+          >
+            ↓ Exportar copia
+          </button>
+
+
+          <label class="btn ghost import-label">
+
+            ↑ Importar copia
+
+            <input
+              id="importInput"
+              type="file"
+              accept=".json,application/json"
+            >
+
+          </label>
+
+
+          <button
+            id="deleteAllBtn"
+            class="btn danger"
+            type="button"
+          >
+            Eliminar todos
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =================================================
+         VERIFICAR
+    ================================================== -->
+
+    <section
+      id="verify"
+      class="view"
+    >
+
+      <div class="section-title">
+
+        <div class="section-icon">
+          ✓
+        </div>
+
+        <div>
+
+          <h2>
+            Verificar ticket
+          </h2>
+
+          <p>
+            Comprueba la validez de una participación.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="card verify-card">
+
+        <input
+          id="verifyCode"
+          class="search"
+          type="text"
+          placeholder="Ejemplo: VIP-000001"
+        >
+
+
+        <button
+          id="verifyBtn"
+          class="btn primary"
+          type="button"
+        >
+          VERIFICAR
+        </button>
+
+
+        <div
+          id="verifyResult"
+          class="verify-result"
+        ></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =================================================
+         SORTEO
+    ================================================== -->
+
+    <section
+      id="draw"
+      class="view"
+    >
+
+      <div class="section-title">
+
+        <div class="section-icon">
+          ⚡
+        </div>
+
+        <div>
+
+          <h2>
+            Sorteo
+          </h2>
+
+          <p>
+            Selecciona tres números ganadores.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="draw-layout">
+
+
+        <div class="card draw-card">
+
+          <div class="draw-wheel-wrap">
+
+            <div
+              id="wheel"
+              class="wheel"
+            >
+
+              <div class="wheel-center">
+                RIFA
+                <b>VIP</b>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <button
+            id="spinBtn"
+            class="btn primary spin"
+            type="button"
+          >
+            🎯 GIRAR RULETA
+          </button>
+
+        </div>
+
+
+        <div class="card winners">
+
+          <h3>
+            Números ganadores
+          </h3>
+
+
+          <div class="winner">
+
+            <span>
+              1.er PREMIO
+            </span>
+
+            <b id="winner1">
+              —
+            </b>
+
+          </div>
+
+
+          <div class="winner">
+
+            <span>
+              2.º PREMIO
+            </span>
+
+            <b id="winner2">
+              —
+            </b>
+
+          </div>
+
+
+          <div class="winner">
+
+            <span>
+              3.er PREMIO
+            </span>
+
+            <b id="winner3">
+              —
+            </b>
+
+          </div>
+
+
+          <button
+            id="clearWinners"
+            class="btn ghost"
+            type="button"
+          >
+            Limpiar resultado
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+  </main>
+
+</section>
+
+
+<!-- =====================================================
+     LIBRERÍA QR
+===================================================== -->
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+
+<!-- =====================================================
+     JAVASCRIPT DE LA APLICACIÓN
+===================================================== -->
+
 <script src="app.js"></script>
-<script>
-const p=document.getElementById('loginPassword'), a=document.getElementById('accessCode');
-p.addEventListener('input',()=>a.value=p.value);
-document.getElementById('eyeBtn').addEventListener('click',()=>{p.type=p.type==='password'?'text':'password'});
-document.getElementById('forgotBtn').addEventListener('click',()=>alert('Introduce tu contraseña de acceso. Si la has olvidado, contacta con el administrador de RIFAS VIP Perú.'));
-</script>
-</body></html>
+
+</body>
+</html>
