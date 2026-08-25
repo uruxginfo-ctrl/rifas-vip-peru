@@ -1,29 +1,19 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>RIFAS VIP PERÚ · Panel privado</title>
+<meta name="theme-color" content="#07040f">
 
-  <title>RIFAS VIP PERÚ · Panel privado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-  <meta name="theme-color" content="#07040f">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-    rel="stylesheet"
-  >
-
-  <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-
-<!-- =====================================================
-     PORTADA / ACCESO
-===================================================== -->
 
 <section id="loginView" class="login-screen">
 
@@ -31,7 +21,6 @@
   <div class="login-glow glow-b"></div>
 
   <header class="login-header">
-
     <div class="brand-main">
       RIFAS <span>VIP</span><small>PERÚ</small>
     </div>
@@ -40,9 +29,7 @@
       <i></i>
       ACCESO PRIVADO
     </div>
-
   </header>
-
 
   <main class="login-content">
 
@@ -63,42 +50,36 @@
         desde un único lugar.
       </p>
 
-    </div>
+      <div class="login-features">
+        <span>GESTIÓN DE RIFAS</span>
+        <span>TICKETS QR</span>
+        <span>SORTEOS</span>
+      </div>
 
+    </div>
 
     <div class="login-card">
 
       <div class="card-top">
 
         <div class="lock-mark">
-          🔐
+          <span class="line-icon lock"></span>
         </div>
 
         <div>
-
-          <span class="card-kicker">
-            PANEL PRIVADO
-          </span>
-
-          <h2>
-            Accede a tu cuenta
-          </h2>
-
+          <span class="card-kicker">PANEL PRIVADO</span>
+          <h2>Accede a tu cuenta</h2>
         </div>
 
       </div>
-
 
       <label for="accessCode">
         Código de acceso
       </label>
 
-
       <div class="access-input">
 
-        <span class="access-icon">
-          🔒
-        </span>
+        <span class="access-icon line-icon lock"></span>
 
         <input
           id="accessCode"
@@ -110,7 +91,6 @@
         <span class="access-status"></span>
 
       </div>
-
 
       <label class="remember-row">
 
@@ -126,7 +106,6 @@
 
       </label>
 
-
       <button
         id="loginBtn"
         class="login-button"
@@ -136,21 +115,18 @@
         <span>→</span>
       </button>
 
-
       <div
         id="loginMsg"
         class="login-message"
       ></div>
 
-
       <div class="login-security">
-        🔒 Conexión protegida · Solo personal autorizado
+        Conexión protegida · Solo personal autorizado
       </div>
 
     </div>
 
   </main>
-
 
   <footer class="login-footer">
 
@@ -189,14 +165,7 @@
 </section>
 
 
-<!-- =====================================================
-     PANEL PRIVADO
-===================================================== -->
-
-<section
-  id="appView"
-  class="hidden app-shell"
->
+<section id="appView" class="hidden app-shell">
 
   <header class="topbar">
 
@@ -205,7 +174,6 @@
       <small>PERÚ</small>
     </div>
 
-
     <nav>
 
       <button
@@ -213,7 +181,8 @@
         data-view="generator"
         type="button"
       >
-        🎟 Generador
+        <span class="nav-mark">01</span>
+        Generador
       </button>
 
       <button
@@ -221,7 +190,8 @@
         data-view="tickets"
         type="button"
       >
-        ▣ Tickets
+        <span class="nav-mark">02</span>
+        Tickets
       </button>
 
       <button
@@ -229,7 +199,8 @@
         data-view="verify"
         type="button"
       >
-        ⌗ Verificar
+        <span class="nav-mark">03</span>
+        Verificar
       </button>
 
       <button
@@ -237,18 +208,19 @@
         data-view="draw"
         type="button"
       >
-        🏆 Sorteo
+        <span class="nav-mark">04</span>
+        Sorteo
       </button>
 
     </nav>
-
 
     <button
       id="logoutBtn"
       class="status"
       type="button"
     >
-      ● Cerrar sesión
+      <i></i>
+      Cerrar sesión
     </button>
 
   </header>
@@ -257,9 +229,7 @@
   <main>
 
 
-    <!-- =================================================
-         GENERADOR
-    ================================================== -->
+    <!-- GENERADOR -->
 
     <section
       id="generator"
@@ -269,19 +239,22 @@
       <div class="section-title">
 
         <div class="section-icon">
-          🎟️
+          01
         </div>
 
         <div>
+          <span class="section-kicker">
+            GESTIÓN
+          </span>
 
           <h2>
             Generador de tickets
           </h2>
 
           <p>
-            Crea participaciones y asigna números disponibles.
+            Crea una participación, asigna números y genera
+            su comprobante QR.
           </p>
-
         </div>
 
       </div>
@@ -294,9 +267,18 @@
 
         <div class="card participant">
 
-          <h3>
-            Datos del participante
-          </h3>
+          <div class="card-heading">
+
+            <span class="card-number">
+              01
+            </span>
+
+            <div>
+              <h3>Participante</h3>
+              <p>Información del comprador</p>
+            </div>
+
+          </div>
 
 
           <label>
@@ -355,38 +337,73 @@
           </label>
 
 
+          <div class="field-row">
+
+            <label>
+              Precio por número
+
+              <input
+                id="price"
+                type="number"
+                min="0"
+                step="0.01"
+                value="10"
+              >
+            </label>
+
+
+            <label>
+              Fecha del sorteo
+
+              <input
+                id="drawDate"
+                type="date"
+              >
+            </label>
+
+          </div>
+
+
           <label>
-            Premio
+            Premio principal
 
             <input
               id="prize"
               type="text"
-              placeholder="Premio de la rifa"
+              placeholder="Ej. automóvil, iPhone, viaje..."
             >
           </label>
 
 
-          <label>
-            Fecha del sorteo
+          <label class="image-upload">
 
-            <input
-              id="drawDate"
-              type="date"
-            >
+            Imagen del premio
+
+            <span class="upload-box">
+
+              <input
+                id="prizeImage"
+                type="file"
+                accept="image/*"
+              >
+
+              <strong>
+                SELECCIONAR FOTOGRAFÍA
+              </strong>
+
+              <small>
+                JPG · PNG · WEBP
+              </small>
+
+            </span>
+
           </label>
 
 
-          <label>
-            Precio por número
-
-            <input
-              id="price"
-              type="number"
-              min="0"
-              step="0.01"
-              value="10"
-            >
-          </label>
+          <div
+            id="prizeImagePreview"
+            class="prize-image-preview hidden"
+          ></div>
 
         </div>
 
@@ -399,12 +416,16 @@
 
             <div>
 
+              <span class="section-kicker">
+                SELECCIÓN
+              </span>
+
               <h3>
                 Números disponibles
               </h3>
 
               <p>
-                Selecciona los números que quieras asignar.
+                Elige los números que quieras asignar.
               </p>
 
             </div>
@@ -476,11 +497,15 @@
       </div>
 
 
-      <!-- SELECCIONADOS -->
+      <!-- RESUMEN -->
 
       <div class="card selected-card">
 
         <div>
+
+          <span class="section-kicker">
+            RESUMEN
+          </span>
 
           <h3>
             Seleccionados
@@ -508,8 +533,6 @@
       </div>
 
 
-      <!-- ACCIONES -->
-
       <div class="actions">
 
         <button
@@ -517,7 +540,7 @@
           class="btn danger"
           type="button"
         >
-          🗑 Limpiar selección
+          LIMPIAR SELECCIÓN
         </button>
 
 
@@ -527,6 +550,7 @@
           type="button"
         >
           GENERAR TICKET QR
+          <span>→</span>
         </button>
 
       </div>
@@ -537,9 +561,7 @@
     </section>
 
 
-    <!-- =================================================
-         TICKETS
-    ================================================== -->
+    <!-- TICKETS -->
 
     <section
       id="tickets"
@@ -549,17 +571,21 @@
       <div class="section-title">
 
         <div class="section-icon">
-          📋
+          02
         </div>
 
         <div>
 
+          <span class="section-kicker">
+            HISTORIAL
+          </span>
+
           <h2>
-            Tickets registrados
+            Mis tickets
           </h2>
 
           <p>
-            Consulta y administra las participaciones.
+            Consulta, verifica y administra las participaciones.
           </p>
 
         </div>
@@ -587,13 +613,13 @@
             class="btn ghost"
             type="button"
           >
-            ↓ Exportar copia
+            EXPORTAR COPIA
           </button>
 
 
           <label class="btn ghost import-label">
 
-            ↑ Importar copia
+            IMPORTAR COPIA
 
             <input
               id="importInput"
@@ -609,7 +635,7 @@
             class="btn danger"
             type="button"
           >
-            Eliminar todos
+            ELIMINAR TODOS
           </button>
 
         </div>
@@ -619,9 +645,7 @@
     </section>
 
 
-    <!-- =================================================
-         VERIFICAR
-    ================================================== -->
+    <!-- VERIFICAR -->
 
     <section
       id="verify"
@@ -631,17 +655,21 @@
       <div class="section-title">
 
         <div class="section-icon">
-          ✓
+          03
         </div>
 
         <div>
+
+          <span class="section-kicker">
+            SEGURIDAD
+          </span>
 
           <h2>
             Verificar ticket
           </h2>
 
           <p>
-            Comprueba la validez de una participación.
+            Comprueba la validez de una participación mediante su código.
           </p>
 
         </div>
@@ -664,7 +692,7 @@
           class="btn primary"
           type="button"
         >
-          VERIFICAR
+          VERIFICAR TICKET
         </button>
 
 
@@ -678,9 +706,7 @@
     </section>
 
 
-    <!-- =================================================
-         SORTEO
-    ================================================== -->
+    <!-- SORTEO -->
 
     <section
       id="draw"
@@ -690,17 +716,21 @@
       <div class="section-title">
 
         <div class="section-icon">
-          ⚡
+          04
         </div>
 
         <div>
 
+          <span class="section-kicker">
+            RESULTADOS
+          </span>
+
           <h2>
-            Sorteo
+            Sorteo VIP
           </h2>
 
           <p>
-            Selecciona tres números ganadores.
+            Realiza el sorteo y presenta los números ganadores.
           </p>
 
         </div>
@@ -713,7 +743,7 @@
 
         <div class="card draw-card">
 
-          <div class="draw-wheel-wrap">
+          <div class="draw-stage">
 
             <div
               id="wheel"
@@ -721,8 +751,19 @@
             >
 
               <div class="wheel-center">
-                RIFA
-                <b>VIP</b>
+
+                <span>
+                  RIFAS
+                </span>
+
+                <b>
+                  VIP
+                </b>
+
+                <small>
+                  PERÚ
+                </small>
+
               </div>
 
             </div>
@@ -735,13 +776,18 @@
             class="btn primary spin"
             type="button"
           >
-            🎯 GIRAR RULETA
+            GIRAR RULETA
+            <span>→</span>
           </button>
 
         </div>
 
 
         <div class="card winners">
+
+          <span class="section-kicker">
+            RESULTADO OFICIAL
+          </span>
 
           <h3>
             Números ganadores
@@ -792,7 +838,7 @@
             class="btn ghost"
             type="button"
           >
-            Limpiar resultado
+            LIMPIAR RESULTADO
           </button>
 
         </div>
@@ -801,22 +847,12 @@
 
     </section>
 
-
   </main>
 
 </section>
 
 
-<!-- =====================================================
-     LIBRERÍA QR
-===================================================== -->
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-
-<!-- =====================================================
-     JAVASCRIPT DE LA APLICACIÓN
-===================================================== -->
 
 <script src="app.js"></script>
 
