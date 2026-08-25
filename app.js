@@ -1,37 +1,123 @@
-const ACCESS_CODE="VIP2026";
-const KEY_TICKETS="rvip_tickets_v5";
-const KEY_CONFIG="rvip_config_v5";
-const state={tickets:[],selected:new Set(),visible:100,sold:new Set(),prizeImage:"",config:{count:1500,price:10},wheelRotation:0};
+const PRICE=10, TOTAL=1500, STORAGE="rvip_tickets_v3", SOLD_STORAGE="rvip_sold_v3";
+const sold=new Set(JSON.parse(localStorage.getItem(SOLD_STORAGE)||"[24,38,72,91,113,145,201,250,333,404,505,606,707,808,909,999]"));
+let selected=new Set(), tickets=JSON.parse(localStorage.getItem(STORAGE)||"[]"), cameraStream=null, scanTimer=null;
+
 const $=id=>document.getElementById(id);
-const money=n=>"S/ "+Number(n||0).toFixed(2);
+const money=n=>`S/ ${n.toFixed(2)}`;
 const pad=n=>String(n).padStart(4,"0");
-const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
-function load(){try{state.tickets=JSON.parse(localStorage.getItem(KEY_TICKETS)||"[]")}catch{state.tickets=[]}try{state.config={...state.config,...JSON.parse(localStorage.getItem(KEY_CONFIG)||"{}")}}catch{}$("numberCount").value=String(state.config.count);$("price").value=state.config.price;$("raffleName").value="RIFAS VIP PERÚ";renderNumbers();renderTickets()}
-function save(){localStorage.setItem(KEY_TICKETS,JSON.stringify(state.tickets));localStorage.setItem(KEY_CONFIG,JSON.stringify(state.config))}
-function allSold(){const s=new Set();state.tickets.forEach(t=>(t.numbers||[]).forEach(n=>s.add(Number(n))));return s}
-function showView(id){document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===id));document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===id));if(id==="tickets")renderTickets();if(id==="generator")renderNumbers()}
-document.querySelectorAll(".nav-btn").forEach(b=>b.addEventListener("click",()=>showView(b.dataset.view)));
-function renderNumbers(){const total=Number($("numberCount").value||1500);state.config.count=total;state.sold=allSold();const grid=$("numberGrid");const end=Math.min(state.visible,total);grid.innerHTML="";for(let i=1;i<=end;i++){const b=document.createElement("button");b.className="num"+(state.selected.has(i)?" selected":"")+(state.sold.has(i)?" sold":"");b.textContent=pad(i);b.disabled=state.sold.has(i);b.onclick=()=>toggleNum(i);grid.appendChild(b)}$("moreNumbers").style.display=end<total?"block":"none";updateSelected()}
-function toggleNum(n){if(state.selected.has(n))state.selected.delete(n);else state.selected.add(n);renderNumbers()}
-$("moreNumbers").onclick=()=>{state.visible=Math.min(state.visible+100,Number($("numberCount").value));renderNumbers()};
-$("numberCount").onchange=()=>{state.config.count=Number($("numberCount").value);state.visible=100;state.selected.clear();save();renderNumbers()};
-$("price").oninput=()=>{state.config.price=Number($("price").value||0);updateSelected();save()};
-$("prizeImage").onchange=e=>{const file=e.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{state.prizeImage=reader.result;$("prizeImagePreview").innerHTML=`<img src="${state.prizeImage}" alt="Vista previa del premio">`;$("prizeImagePreview").classList.remove("hidden")};reader.readAsDataURL(file)};
-function updateSelected(){const arr=[...state.selected].sort((a,b)=>a-b);$("selectedCount").textContent=`(${arr.length})`;$("selectedList").innerHTML=arr.length?arr.map(n=>`<span class="chip">${pad(n)} <button data-remove="${n}" type="button">×</button></span>`).join(""):"<span class='muted'>No has seleccionado números.</span>";document.querySelectorAll("[data-remove]").forEach(x=>x.onclick=()=>{state.selected.delete(Number(x.dataset.remove));renderNumbers()});$("total").textContent=money(arr.length*Number($("price").value||0))}
-$("clearSelection").onclick=()=>{state.selected.clear();renderNumbers()};
-function resetForm(){["name","dni","phone","email","prize"].forEach(id=>$(id).value="");$("drawDate").value="";$("prizeImage").value="";$("prizeImagePreview").innerHTML="";$("prizeImagePreview").classList.add("hidden");state.prizeImage="";state.selected.clear();state.visible=100;renderNumbers()}
-$("generateBtn").onclick=()=>{const name=$("name").value.trim(),dni=$("dni").value.trim(),nums=[...state.selected].sort((a,b)=>a-b);if(!name||!dni){alert("Completa nombre y DNI.");return}if(!/^\d{8}$/.test(dni)){alert("El DNI debe tener 8 dígitos.");return}if(!nums.length){alert("Selecciona al menos un número.");return}const ticket={id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),code:"VIP-"+String(state.tickets.length+1).padStart(6,"0"),name,dni,phone:$("phone").value.trim(),email:$("email").value.trim(),raffle:$("raffleName").value.trim()||"RIFAS VIP PERÚ",prize:$("prize").value.trim(),prizeImage:state.prizeImage,date:$("drawDate").value,price:Number($("price").value||0),numbers:nums,created:new Date().toISOString()};state.tickets.unshift(ticket);save();renderNumbers();renderTicketPreview(ticket);resetForm();renderTickets();window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"})};
-function renderTicketPreview(t){$("ticketResult").innerHTML=`<div class="ticket-preview"><div class="ticket-layout"><div><div class="ticket-logo">RIFAS <b>VIP</b> <small>PERÚ</small></div>${t.prizeImage?`<img class="ticket-prize-image" src="${t.prizeImage}" alt="Premio">`:``}<div class="ticket-prize">${esc(t.prize||"PREMIO VIP")}</div><p class="ticket-subtitle">TU SUERTE · TU PREMIO · TU MOMENTO</p></div><div class="ticket-info"><div><small>Números</small><strong>${t.numbers.map(pad).join(", ")}</strong></div><div><small>Participante</small><strong>${esc(t.name)}</strong></div><div><small>DNI</small><strong>${esc(t.dni)}</strong></div><div><small>WhatsApp</small><strong>${esc(t.phone||"—")}</strong></div><div><small>Fecha del sorteo</small><strong>${esc(t.date||"—")}</strong></div><div><small>Importe</small><strong>${money(t.numbers.length*t.price)}</strong></div></div><div><div id="qr-${t.id}" class="qr-box"></div><div class="ticket-code">${esc(t.code)}</div></div></div></div>`;const target=$(`qr-${t.id}`);if(window.QRCode)new QRCode(target,{text:JSON.stringify({code:t.code,numbers:t.numbers,raffle:t.raffle}),width:150,height:150,colorDark:"#111",colorLight:"#fff",correctLevel:QRCode.CorrectLevel.M})}
-function renderTickets(){const q=($("ticketSearch")?.value||"").toLowerCase().trim(),list=$("ticketsList");if(!list)return;const filtered=state.tickets.filter(t=>[t.code,t.name,t.dni,t.phone,...(t.numbers||[]).map(pad),...(t.numbers||[])].join(" ").toLowerCase().includes(q));list.innerHTML=filtered.length?filtered.map(t=>`<div class="ticket-row"><div><strong>${esc(t.code)}</strong><small>${esc(t.name)} · DNI ${esc(t.dni)}<br>Números: ${t.numbers.map(pad).join(", ")}</small></div><div><strong>${money(t.numbers.length*t.price)}</strong><div class="row-actions"><button class="secondary-btn" data-view-ticket="${t.id}" type="button">VER</button><button class="outline-danger small" data-delete-ticket="${t.id}" type="button">ELIMINAR</button></div></div></div>`).join(""):"<p class='muted'>No hay tickets guardados.</p>";document.querySelectorAll("[data-delete-ticket]").forEach(b=>b.onclick=()=>{if(confirm("¿Eliminar este ticket?")){state.tickets=state.tickets.filter(t=>t.id!==b.dataset.deleteTicket);save();renderTickets();renderNumbers()}});document.querySelectorAll("[data-view-ticket]").forEach(b=>b.onclick=()=>{const t=state.tickets.find(x=>x.id===b.dataset.viewTicket);if(t){showView("generator");renderTicketPreview(t)}})}
-$("ticketSearch").oninput=renderTickets;
-$("verifyBtn").onclick=()=>{const code=$("verifyCode").value.trim().toUpperCase(),t=state.tickets.find(x=>x.code===code);$("verifyResult").innerHTML=t?`<div class="verified"><b>TICKET VÁLIDO</b><p><strong>${esc(t.code)}</strong> · ${esc(t.name)} · DNI ${esc(t.dni)}</p><p>Números: ${t.numbers.map(pad).join(", ")}</p><p>Premio: ${esc(t.prize||"—")}</p></div>`:`<div class="notfound">NO SE ENCONTRÓ ESE TICKET</div>`};
-$("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify({tickets:state.tickets,config:state.config},null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="rifas-vip-copia.json";a.click();URL.revokeObjectURL(a.href)};
-$("importInput").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d.tickets))throw 0;state.tickets=d.tickets;state.config={...state.config,...(d.config||{})};save();load();alert("Copia importada correctamente.")}catch{alert("El archivo no es válido.")}};r.readAsText(f)};
-$("deleteAllBtn").onclick=()=>{if(confirm("¿Eliminar TODOS los tickets guardados?")){state.tickets=[];save();renderTickets();renderNumbers()}};
-function drawWinners(){const nums=[...allSold()].sort((a,b)=>a-b);if(nums.length<3){alert("Necesitas al menos 3 números registrados en tickets.");return}const chosen=[];while(chosen.length<3){const n=nums[Math.floor(Math.random()*nums.length)];if(!chosen.includes(n))chosen.push(n)}$("winner1").textContent=pad(chosen[0]);$("winner2").textContent=pad(chosen[1]);$("winner3").textContent=pad(chosen[2])}
-$("spinBtn").onclick=()=>{const wheel=$("wheel");state.wheelRotation+=1440+Math.floor(Math.random()*720);wheel.style.transform=`rotate(${state.wheelRotation}deg)`;setTimeout(drawWinners,4100)};
-$("clearWinners").onclick=()=>["winner1","winner2","winner3"].forEach(id=>$(id).textContent="—");
-$("loginBtn").onclick=login;$("accessCode").onkeydown=e=>{if(e.key==="Enter")login()};
-function login(){if($("accessCode").value===ACCESS_CODE){sessionStorage.setItem("rvip_auth","1");$("loginView").classList.add("hidden");$("appView").classList.remove("hidden");load()}else $("loginMsg").textContent="Código incorrecto."}
-$("logoutBtn").onclick=()=>{sessionStorage.removeItem("rvip_auth");location.reload()};
-if(sessionStorage.getItem("rvip_auth")==="1"){$("loginView").classList.add("hidden");$("appView").classList.remove("hidden");load()}
+function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove("show"),2400)}
+function go(id){document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"});document.querySelectorAll(".nav-link").forEach(b=>b.classList.toggle("active",b.dataset.go===id))}
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+window.addEventListener("scroll",()=>{const sections=["inicio","generar","tickets","verificar","sorteo"];let active="inicio";for(const id of sections){const el=$(id);if(el&&window.scrollY+130>=el.offsetTop)active=id}document.querySelectorAll(".nav-link").forEach(b=>b.classList.toggle("active",b.dataset.go===active))});
+$("menuBtn").addEventListener("click",()=>toast("Usa la barra inferior para navegar"));
+
+function renderNumbers(filter=""){
+ const grid=$("numberGrid"); grid.innerHTML="";
+ const f=String(filter).trim();
+ for(let n=1;n<=TOTAL;n++){
+   if(f&&!String(n).includes(f))continue;
+   const b=document.createElement("button"); b.className="num"+(sold.has(n)?" sold":"")+(selected.has(n)?" selected":"");
+   b.textContent=pad(n); b.title=sold.has(n)?"Número vendido":`Seleccionar ${pad(n)}`;
+   b.disabled=sold.has(n);
+   b.addEventListener("click",()=>{
+     if(selected.has(n))selected.delete(n);
+     else if(selected.size>=10){toast("Puedes seleccionar hasta 10 números por ticket");return}
+     else selected.add(n);
+     renderNumbers($("numberSearch").value);updateSelection();
+   });
+   grid.appendChild(b);
+ }
+ updateSelection();
+}
+function updateSelection(){$("selectedCount").textContent=selected.size;$("totalPrice").textContent=money(selected.size*PRICE)}
+$("numberSearch").addEventListener("input",e=>renderNumbers(e.target.value));
+$("clearBtn").addEventListener("click",()=>{selected.clear();$("numberSearch").value="";renderNumbers()});
+$("randomBtn").addEventListener("click",()=>{
+ selected.clear();const candidates=[];for(let n=1;n<=TOTAL;n++)if(!sold.has(n))candidates.push(n);
+ for(let i=candidates.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[candidates[i],candidates[j]]=[candidates[j],candidates[i]]}
+ candidates.slice(0,Math.min(3,10)).forEach(n=>selected.add(n));renderNumbers($("numberSearch").value);toast("Hemos elegido números disponibles al azar");
+});
+
+function ticketId(){return "RVIP-"+new Date().toISOString().slice(0,10).replaceAll("-","")+"-"+Math.random().toString(36).slice(2,9).toUpperCase()}
+function formatDate(v){const d=new Date(v);return isNaN(d)?"—":d.toLocaleDateString("es-PE",{day:"2-digit",month:"2-digit",year:"numeric"})}
+function save(){localStorage.setItem(STORAGE,JSON.stringify(tickets));localStorage.setItem(SOLD_STORAGE,JSON.stringify([...sold]))}
+function buildQr(text){
+ const q=$("qrcode");q.innerHTML="";
+ if(window.QRCode){new QRCode(q,{text, width:120,height:120,colorDark:"#111111",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M})}
+ else {q.innerHTML=`<div style="font:700 10px Arial;color:#111;text-align:center">QR<br>${text.slice(-8)}</div>`}
+}
+function showTicket(t){
+ $("ticketWrap").hidden=false;
+ $("ticketNums").textContent=t.nums.map(pad).join(", ");
+ $("ticketName").textContent=t.name||"—"; $("ticketPhone").textContent=t.phone||"—"; $("ticketPrize").textContent=t.prize||"—";
+ $("ticketDate").textContent=formatDate(t.drawDate); $("ticketId").textContent=t.id; buildQr(t.id);
+ $("ticketWrap").scrollIntoView({behavior:"smooth",block:"center"});
+}
+$("generateBtn").addEventListener("click",()=>{
+ if(!selected.size){toast("Selecciona al menos un número");return}
+ const t={id:ticketId(),nums:[...selected].sort((a,b)=>a-b),name:$("name").value.trim(),phone:$("phone").value.trim(),email:$("email").value.trim(),raffle:$("raffle").value.trim(),prize:$("prize").value.trim(),drawDate:$("drawDate").value,createdAt:new Date().toISOString(),total:selected.size*PRICE};
+ if(!t.name||!t.phone||!t.prize){toast("Completa nombre, WhatsApp y premio");return}
+ tickets.unshift(t);t.nums.forEach(n=>sold.add(n));selected.clear();save();renderNumbers();renderTickets();showTicket(t);toast("Ticket generado correctamente");
+});
+$("printBtn").addEventListener("click",()=>window.print());
+
+function renderTickets(){
+ $("ticketCount").textContent=tickets.length;
+ const box=$("ticketList");box.innerHTML="";
+ if(!tickets.length){box.innerHTML='<div class="empty">Todavía no tienes tickets. Genera tu primer ticket arriba.</div>';return}
+ tickets.forEach(t=>{
+  const el=document.createElement("article");el.className="ticket-mini";
+  el.innerHTML=`<span class="tag">GENERADO</span><h3>${escapeHtml(t.prize)}</h3><p><b>Números:</b> <strong>${t.nums.map(pad).join(", ")}</strong></p><p><b>Sorteo:</b> ${formatDate(t.drawDate)}</p><p><b>Total:</b> ${money(t.total)}</p><button class="small-btn">VER TICKET</button>`;
+  el.querySelector("button").addEventListener("click",()=>showTicket(t));box.appendChild(el);
+ });
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+
+function findTicket(id){return tickets.find(t=>t.id.toLowerCase()===id.toLowerCase().trim())}
+function verify(id,quiet=false){
+ const t=findTicket(id);
+ const box=$("verifyResult");box.hidden=false;
+ if(t){box.className="verify-result ok";box.innerHTML=`<b>✓ TICKET AUTÉNTICO</b><br>${escapeHtml(t.name)} · ${t.nums.map(pad).join(", ")}<br>Premio: ${escapeHtml(t.prize)} · Sorteo: ${formatDate(t.drawDate)}`;if(!quiet)toast("Ticket verificado correctamente")}
+ else {box.className="verify-result bad";box.innerHTML="<b>✕ NO ENCONTRADO</b><br>No existe un ticket con ese identificador en este dispositivo.";if(!quiet)toast("No encontramos ese ticket")}
+}
+$("verifyBtn").addEventListener("click",()=>verify($("verifyId").value));
+$("verifyId").addEventListener("keydown",e=>{if(e.key==="Enter")verify($("verifyId").value)});
+$("cameraBtn").addEventListener("click",startCamera);
+$("stopCamera").addEventListener("click",stopCamera);
+
+async function startCamera(){
+ if(!navigator.mediaDevices?.getUserMedia){toast("Tu navegador no permite acceder a la cámara");return}
+ try{
+  cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}}});
+  const video=$("camera");video.srcObject=cameraStream;video.style.display="block";await video.play();
+  $("cameraBtn").classList.add("hidden");$("stopCamera").classList.remove("hidden");$("cameraHint").textContent="Buscando código QR…";
+  if("BarcodeDetector" in window){
+   const detector=new BarcodeDetector({formats:["qr_code"]});
+   scanTimer=setInterval(async()=>{if(video.readyState<2)return;try{const codes=await detector.detect(video);if(codes.length){const value=codes[0].rawValue;stopCamera();$("verifyId").value=value;verify(value)}}catch{}},400);
+  }else toast("Escáner automático no disponible; introduce el ID manualmente");
+ }catch(e){toast("No se pudo abrir la cámara. Revisa los permisos del navegador.")}
+}
+function stopCamera(){if(scanTimer)clearInterval(scanTimer);scanTimer=null;if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null}const v=$("camera");v.srcObject=null;v.style.display="none";$("cameraBtn").classList.remove("hidden");$("stopCamera").classList.add("hidden");$("cameraHint").textContent="Apunta la cámara al código QR del ticket."}
+
+function targetDate(){return new Date($("drawDate").value||"2026-12-31T20:00:00")}
+function updateCountdown(){
+ const diff=Math.max(0,targetDate()-new Date());const s=Math.floor(diff/1000);
+ const d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60),sec=s%60;
+ $("days").textContent=String(d).padStart(3,"0");$("hours").textContent=String(h).padStart(2,"0");$("mins").textContent=String(m).padStart(2,"0");$("secs").textContent=String(sec).padStart(2,"0");
+ $("drawNote").textContent=sold.size?`${sold.size} número(s) vendidos · listos para el sorteo`:"Aún no hay números vendidos";
+}
+$("drawDate").addEventListener("change",updateCountdown);
+$("drawBtn").addEventListener("click",()=>{
+ const candidates=[...sold].filter(n=>n>=1&&n<=TOTAL);
+ if(!candidates.length){toast("No hay números vendidos para sortear");return}
+ const n=candidates[Math.floor(Math.random()*candidates.length)];
+ const w=$("winner");w.hidden=false;w.innerHTML=`<span>NÚMERO GANADOR</span><br><b>${pad(n)}</b><br><small>Resultado generado a partir de los números vendidos en este dispositivo.</small>`;w.scrollIntoView({behavior:"smooth",block:"center"});
+});
+
+$("loginBtn").addEventListener("click",()=>{
+ const email=$("loginEmail").value.trim(),pass=$("loginPass").value;
+ if(!email||!pass){toast("Introduce Gmail y contraseña");return}
+ toast("Acceso de demostración activado");go("generar");
+});
+renderNumbers();renderTickets();updateCountdown();setInterval(updateCountdown,1000);
+window.addEventListener("beforeunload",stopCamera);
